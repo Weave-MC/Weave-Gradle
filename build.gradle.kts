@@ -17,14 +17,16 @@ dependencies {
     implementation("org.ow2.asm:asm:9.2")
     implementation("org.ow2.asm:asm-tree:9.2")
     implementation("org.ow2.asm:asm-commons:9.2")
+    
     compileOnly("org.projectlombok:lombok:1.18.22")
     annotationProcessor("org.projectlombok:lombok:1.18.22")
 }
 
 gradlePlugin {
-    /* We gotta figrue this out */
-    val loom by plugins.creating {
-        id = "$group"
-        implementationClass = "${group}.WeavePlugin"
+    plugins {
+        create("loom") {
+            id = "$group"
+            implementationClass = "${group}.WeavePlugin"
+        }
     }
 }
