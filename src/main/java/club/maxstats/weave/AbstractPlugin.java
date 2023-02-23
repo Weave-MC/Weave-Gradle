@@ -1,0 +1,57 @@
+package club.maxstats.weave;
+
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.internal.impldep.com.google.common.collect.ImmutableMap;
+import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+import org.gradle.plugins.ide.idea.model.IdeaModel;
+import org.jetbrains.annotations.NotNull;
+
+public class AbstractPlugin implements Plugin<Project> {
+
+    protected Project project;
+
+    @Override
+    public void apply(@NotNull Project target) {
+        project = target;
+
+        /* Applying our default plugins. */
+        project.apply(ImmutableMap.of("plugin", "idea"));
+        project.apply(ImmutableMap.of("plugin", "eclipse"));
+        project.apply(ImmutableMap.of("plugin", "java"));
+    }
+
+    /**
+     * Creates a task of the specified type.
+     *
+     * @param target The project to create the task in.
+     * @param name   The name of the task.
+     * @param type   The type of the task.
+     * @return       The created task.
+     * @param <T>    Inherited from {@link Task}.
+     */
+    public static <T extends Task> T makeTask(Project target, String name, Class<T> type) {
+        return target.getTasks().create(name, type);
+    }
+
+    protected void configureIDE() {
+        /* For IntelliJ IDEA. */
+        IdeaModel ideaModel = project.getExtensions().getByType(IdeaModel.class);
+        ideaModel.getModule().setDownloadJavadoc(true);
+        ideaModel.getModule().setDownloadSources(true);
+        ideaModel.getModule().setInheritOutputDirs(true);
+//      This is where we'd ad the Minecraft dependency configuration.
+//      ideaModel.getModule().getScopes().get("COMPILE").get("plus").add(project.getConfigurations().getByName("righttt here."));
+
+        /* For Eclipse. */
+        EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);
+//      This is where we'd ad the Minecraft dependency configuration.
+//      eclipseModel.getClasspath().getPlusConfigurations().add(project.getConfigurations().getByName("righttt here."));
+    }
+
+    protected void configureCompilation() {
+
+    }
+
+}

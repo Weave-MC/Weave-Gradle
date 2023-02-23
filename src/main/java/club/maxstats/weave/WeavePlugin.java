@@ -5,7 +5,6 @@ import lombok.NonNull;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.tasks.TaskProvider;
 
 /**
  * TODO: Add description here.
@@ -15,7 +14,7 @@ import org.gradle.api.tasks.TaskProvider;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class WeavePlugin implements Plugin<Project> {
+public class WeavePlugin extends AbstractPlugin {
 
     /**
      * {@link Plugin#apply(Object)}
@@ -24,8 +23,10 @@ public class WeavePlugin implements Plugin<Project> {
      */
     @Override
     public void apply(@NonNull Project target) {
+        super.apply(target);
+
         target.getPluginManager().apply(JavaPlugin.class);
-        
+
         /* Initializing our SetupTask. */
         target.getTasks().create("setupDecompWorkspace", SetupTask.class);
     }
