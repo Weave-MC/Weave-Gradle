@@ -25,10 +25,9 @@ public class WeavePlugin implements Plugin<Project> {
     @Override
     public void apply(@NonNull Project target) {
         target.getPluginManager().apply(JavaPlugin.class);
-
+        
         /* Initializing our SetupTask. */
-        TaskProvider<SetupTask> setupTask = target.getTasks().register("setup", SetupTask.class);
-        setupTask.configure(task -> task.dependsOn("setup"));
+        target.getTasks().create("setupDecompWorkspace", SetupTask.class);
     }
 
 }
