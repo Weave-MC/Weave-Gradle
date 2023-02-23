@@ -17,10 +17,6 @@ import org.gradle.api.tasks.TaskProvider;
  */
 public class WeavePlugin implements Plugin<Project> {
 
-    public static void main(String[] args) {
-        System.out.println("Hello world!");
-    }
-
     /**
      * {@link Plugin#apply(Object)}
      *
