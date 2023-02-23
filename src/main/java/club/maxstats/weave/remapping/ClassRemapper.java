@@ -3,8 +3,8 @@ package club.maxstats.weave.remapping;
 import org.objectweb.asm.commons.Remapper;
 
 /**
- * Maps obfuscated classes and fields into MCP names using
- * object-web's {@link Remapper} class, as-well as a mapping file.
+ * Maps obfuscated classes and fields into MCP names using object-web's {@link Remapper} class, as-well as a mapping
+ * file.
  *
  * @author Max (<a href="https://github.com/exejar">...</a>)
  * @see org.objectweb.asm.commons.Remapper

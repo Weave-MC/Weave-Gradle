@@ -8,10 +8,10 @@ import org.gradle.api.plugins.JavaPlugin;
 /**
  * TODO: Add description here.
  *
- * @version 1.0.0
- * @since 1.0.0
  * @author Scherso (<a href="https://github.com/Scherso">...</a>), Max (<a href="https://github.com/exejar">...</a>)
  *         Nils <3 (<a href="https://github.com/Nilsen84">...</a>)
+ * @version 1.0.0
+ * @since 1.0.0
  */
 public class WeavePlugin implements Plugin<Project> {
 
@@ -21,6 +21,7 @@ public class WeavePlugin implements Plugin<Project> {
 
     /**
      * {@link Plugin#apply(Object)}
+     *
      * @param target The target object
      */
     @Override
