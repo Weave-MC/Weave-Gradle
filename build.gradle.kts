@@ -22,5 +22,3 @@ gradlePlugin {
         implementationClass = "${group}.WeavePlugin"
     }
 }
-
-
