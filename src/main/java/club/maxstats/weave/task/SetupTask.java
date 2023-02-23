@@ -1,6 +1,7 @@
 package club.maxstats.weave.task;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
 
 /**
  * TODO: Add description here.
@@ -8,6 +9,7 @@ import org.gradle.api.DefaultTask;
  */
 public class SetupTask extends DefaultTask {
 
+    @TaskAction
     public SetupTask() {
         super();
     }
