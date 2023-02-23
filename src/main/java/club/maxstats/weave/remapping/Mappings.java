@@ -1,5 +1,7 @@
 package club.maxstats.weave.remapping;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.UtilityClass;
 
@@ -14,16 +16,20 @@ record Method(String name, String desc) {}
 
 @ToString
 class MappedClass {
+
     public String name;
     public final Map<Method, Method> methods = new HashMap<>();
     public final Map<String, String> fields = new HashMap<>();
+
     public MappedClass(String name) {
         this.name = name;
     }
+
 }
 
 @UtilityClass
 public class Mappings {
+
     private final Map<String, MappedClass> classMap = new HashMap<>();
 
     public MappedClass getMappedClass(String notchName) {
@@ -89,4 +95,5 @@ public class Mappings {
             ex.printStackTrace();
         }
     }
+
 }
