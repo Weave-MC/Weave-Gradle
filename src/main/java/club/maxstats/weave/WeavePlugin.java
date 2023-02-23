@@ -1,9 +1,11 @@
 package club.maxstats.weave;
 
+import club.maxstats.weave.task.SetupTask;
 import lombok.NonNull;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.tasks.TaskProvider;
 
 /**
  * TODO: Add description here.
@@ -27,6 +29,10 @@ public class WeavePlugin implements Plugin<Project> {
     @Override
     public void apply(@NonNull Project target) {
         target.getPluginManager().apply(JavaPlugin.class);
+
+        /* Initializing our SetupTask. */
+        TaskProvider<SetupTask> setupTask = target.getTasks().register("setup", SetupTask.class);
+        setupTask.configure(task -> task.dependsOn("setup"));
     }
 
 }
