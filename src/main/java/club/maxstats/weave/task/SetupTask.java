@@ -9,9 +9,16 @@ import org.gradle.api.tasks.TaskAction;
  */
 public class SetupTask extends DefaultTask {
 
-    @TaskAction
     public SetupTask() {
         super();
+    }
+
+    /**
+     * Sets up the decompiled workspace for the user in their development environment.
+     */
+    @TaskAction
+    public void setupDecompiledWorkspace() {
+
     }
 
 }

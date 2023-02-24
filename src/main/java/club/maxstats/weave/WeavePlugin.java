@@ -4,7 +4,6 @@ import club.maxstats.weave.task.SetupTask;
 import lombok.NonNull;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPlugin;
 
 /**
  * TODO: Add description here.
@@ -19,16 +18,17 @@ public class WeavePlugin extends AbstractPlugin {
     /**
      * {@link Plugin#apply(Object)}
      *
-     * @param target The target object
+     * @param target The target object.
      */
     @Override
     public void apply(@NonNull Project target) {
+        /* Applying our method in 'AbstractPlugin#apply(Project)'. */
         super.apply(target);
 
-        target.getPluginManager().apply(JavaPlugin.class);
-
-        /* Initializing our SetupTask. */
-        target.getTasks().create("setupDecompWorkspace", SetupTask.class);
+        /* Initializing tasks. */
+        makeTask("setupDecompWorkspace", SetupTask.class).doLast(task -> {
+            System.out.println("Hello, World?");
+        });
     }
 
 }
