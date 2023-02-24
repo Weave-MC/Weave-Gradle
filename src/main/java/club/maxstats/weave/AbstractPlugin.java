@@ -35,7 +35,7 @@ public class AbstractPlugin implements Plugin<Project> {
      * @return       The created task.
      * @param <T>    Inherited from {@link Task}.
      */
-    public static <T extends Task> T makeTask(Project target, String name, Class<T> type) {
+    public <T extends Task> T makeTask(Project target, String name, Class<T> type) {
         return target.getTasks().create(name, type);
     }
 
