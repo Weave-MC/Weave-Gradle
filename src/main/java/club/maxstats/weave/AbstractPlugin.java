@@ -23,6 +23,8 @@ public class AbstractPlugin implements Plugin<Project> {
         project.apply(ImmutableMap.of("plugin", "idea"));
         project.apply(ImmutableMap.of("plugin", "eclipse"));
         project.apply(ImmutableMap.of("plugin", "java"));
+
+        configureIDE();
     }
 
     /**
@@ -52,17 +54,20 @@ public class AbstractPlugin implements Plugin<Project> {
 
     protected void configureIDE() {
         /* For IntelliJ IDEA. */
-        IdeaModel ideaModel = project.getExtensions().getByType(IdeaModel.class);
+//      IdeaModel ideaModel = project.getExtensions().getByType(IdeaModel.class);
+        IdeaModel ideaModel = (IdeaModel) project.getExtensions().getByName("idea");
+        ideaModel.getModule().getExcludeDirs().addAll(project.files(".gradle", "build", ".idea", "out").getFiles());
         ideaModel.getModule().setDownloadJavadoc(true);
         ideaModel.getModule().setDownloadSources(true);
         ideaModel.getModule().setInheritOutputDirs(true);
 //      This is where we'd ad the Minecraft dependency configuration.
-//      ideaModel.getModule().getScopes().get("COMPILE").get("plus").add(project.getConfigurations().getByName("righttt here."));
+        ideaModel.getModule().getScopes().get("COMPILE").get("plus").add(project.getConfigurations().getByName("MC_DEPENDENCIES"));
 
         /* For Eclipse. */
-        EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);
+//      EclipseModel eclipseModel = project.getExtensions().getByType(EclipseModel.class);
+        EclipseModel eclipseModel = (EclipseModel) project.getExtensions().getByName("eclipse");
 //      This is where we'd ad the Minecraft dependency configuration.
-//      eclipseModel.getClasspath().getPlusConfigurations().add(project.getConfigurations().getByName("righttt here."));
+        eclipseModel.getClasspath().getPlusConfigurations().add(project.getConfigurations().getByName("MC_DEPENDENCIES"));
     }
 
     protected void configureCompilation() {
