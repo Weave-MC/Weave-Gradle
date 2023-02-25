@@ -13,22 +13,15 @@ import org.gradle.api.Project;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class WeavePlugin extends AbstractPlugin {
+public class WeavePlugin implements Plugin<Project> {
 
     /**
      * {@link Plugin#apply(Object)}
      *
-     * @param target The target object.
+     * @param project The target project.
      */
     @Override
-    public void apply(@NonNull Project target) {
-        /* Applying our method in 'AbstractPlugin#apply(Project)'. */
-        super.apply(target);
-
-        /* Initializing tasks. */
-        makeTask("setupDecompWorkspace", SetupTask.class).doLast(task -> {
-            System.out.println("Hello, World?");
-        });
+    public void apply(@NonNull Project project) {
+        project.getTasks().register("setupDecompWorkspace", SetupTask.class);
     }
-
 }
