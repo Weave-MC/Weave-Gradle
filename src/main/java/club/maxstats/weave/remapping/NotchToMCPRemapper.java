@@ -9,7 +9,7 @@ import org.objectweb.asm.commons.Remapper;
  * @author Max (<a href="https://github.com/exejar">...</a>)
  * @see org.objectweb.asm.commons.Remapper
  */
-public class ClassRemapper extends Remapper {
+public class NotchToMCPRemapper extends Remapper {
 
 
     /**
