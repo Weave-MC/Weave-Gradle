@@ -24,4 +24,5 @@ public class WeavePlugin implements Plugin<Project> {
     public void apply(@NonNull Project project) {
         project.getTasks().register("setupDecompWorkspace", SetupTask.class);
     }
+
 }

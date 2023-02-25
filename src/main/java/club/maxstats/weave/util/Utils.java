@@ -8,17 +8,29 @@ import java.io.File;
 @UtilityClass
 public class Utils {
 
+    /**
+     * Returns the local Minecraft path.
+     * @return The local Minecraft path.
+     */
     private String getLocalMinecraftPath() {
-        if (SystemUtils.IS_OS_WINDOWS) {
+        if (SystemUtils.IS_OS_MAC)
+            return System.getenv("user.home") + "/Library/Application Support/minecraft";
+
+        if (SystemUtils.IS_OS_LINUX)
+            return System.getenv("user.home") + "/.minecraft";
+
+        if (SystemUtils.IS_OS_WINDOWS)
             return System.getenv("appdata") + "/.minecraft";
-        } else if (SystemUtils.IS_OS_MAC) {
-            return System.getProperty("user.home") +  "/Library/Application Support/minecraft";
-        } else {
-            return System.getProperty("user.home") + "/.minecraft";
-        }
+
+        return null;
     }
 
+    /**
+     * Returns the Minecraft jar file.
+     * @return The Minecraft jar file.
+     */
     public File getMinecraftJar() {
         return new File(getLocalMinecraftPath(), "versions/1.8.9/1.8.9.jar");
     }
+
 }
