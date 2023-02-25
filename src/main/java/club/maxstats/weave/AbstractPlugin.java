@@ -7,14 +7,13 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.internal.impldep.com.google.common.collect.ImmutableMap;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 import org.gradle.plugins.ide.idea.model.IdeaModel;
-import org.jetbrains.annotations.NotNull;
 
 public class AbstractPlugin implements Plugin<Project> {
 
     protected Project project;
 
     @Override
-    public void apply(@NotNull Project target) {
+    public void apply(Project target) {
         /* Applying a Java-lang Gradle plugin. */
         target.getPluginManager().apply(JavaPlugin.class);
 
