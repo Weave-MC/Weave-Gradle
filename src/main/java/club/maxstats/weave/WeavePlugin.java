@@ -28,7 +28,7 @@ import java.util.jar.JarOutputStream;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class WeavePlugin implements Plugin<Project> {
+public class WeavePlugin extends AbstractPlugin {
 
     /**
      * {@link Plugin#apply(Object)}
