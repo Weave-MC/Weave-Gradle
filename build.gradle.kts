@@ -23,6 +23,7 @@ dependencies {
     implementation("org.ow2.asm:asm-commons:9.2")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("commons-io:commons-io:2.11.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     compileOnly("org.projectlombok:lombok:1.18.22")
     annotationProcessor("org.projectlombok:lombok:1.18.22")
