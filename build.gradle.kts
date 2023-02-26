@@ -2,6 +2,7 @@ plugins {
     idea
     java
     `java-gradle-plugin`
+    `maven-publish`
 }
 
 val projectName:    String by project

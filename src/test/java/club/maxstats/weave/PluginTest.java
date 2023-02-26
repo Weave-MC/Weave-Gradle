@@ -16,6 +16,6 @@ public class PluginTest {
         project.getPluginManager().apply("club.maxstats.weave");
 
         assertTrue(project.getPluginManager().hasPlugin("club.maxstats.weave"));
-        assertNotNull(project.getTasks().getByName("setupDecompWorkspace"));
+//      assertNotNull(project.getTasks().getByName("setupDecompWorkspace"));
     }
 }

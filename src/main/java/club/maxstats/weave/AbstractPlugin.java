@@ -35,7 +35,6 @@ public class AbstractPlugin implements Plugin<Project> {
         /* Applying a Java-lang Gradle plugin. */
         target.getPluginManager().apply(JavaPlugin.class);
 
-
         configureIDE();
 
         project.afterEvaluate(project1 -> {
