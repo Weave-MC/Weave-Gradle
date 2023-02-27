@@ -29,8 +29,8 @@ public class Utils {
      * Returns the Minecraft jar file.
      * @return The Minecraft jar file.
      */
-    public File getMinecraftJar() {
-        return new File(getLocalMinecraftPath(), "versions/1.8.9/1.8.9.jar");
+    public File getMinecraftJar(String version) {
+        return new File(Constants.CACHE_DIR + "/" + version, "client.jar");
     }
 
 }
