@@ -1,13 +1,8 @@
 package club.maxstats.weave.configuration.provider;
 
-import club.maxstats.weave.util.DownloadUtil;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.JsonElement;
+import org.gradle.api.Project;
 
 public class MinecraftLibraryProvider {
     private MinecraftProvider minecraftProvider;
@@ -17,21 +12,20 @@ public class MinecraftLibraryProvider {
 
     public void provide() {
         JsonArray librariesArray = this.minecraftProvider.getVersionJson().get("libraries").getAsJsonArray();
+        Project project = this.minecraftProvider.getProject();
 
-        Map<String, String> urlChecksumMap = new HashMap<>();
-        for (int i = 0; i < librariesArray.size(); i++) {
-            JsonObject library = librariesArray.get(i).getAsJsonObject();
-            JsonObject libraryArtifact = library.getAsJsonObject("downloads").getAsJsonObject("artifact");
+        project.getRepositories().maven(mavenArtifactRepository -> {
+            mavenArtifactRepository.setName("mojang");
+            mavenArtifactRepository.setUrl("https://libraries.minecraft.net/");
+        });
 
-            /* If library artifact is null, entry is a natives jar which is not needed */
-            if (libraryArtifact == null) continue;
+        for (JsonElement library : librariesArray) {
+            String name = library.getAsJsonObject().get("name").getAsString();
 
-            String url = libraryArtifact.get("url").getAsString();
-            String checksum = libraryArtifact.get("sha1").getAsString();
+            if (name == null || name.contains("twitch-platform") || name.contains("twitch-external"))
+                continue;
 
-            urlChecksumMap.put(url, checksum);
+            project.getDependencies().add("compileOnly", name);
         }
-
-        DownloadUtil.downloadAndChecksumMultipleAsync(urlChecksumMap, this.minecraftProvider.getDownloadPath() + "/libraries");
     }
 }
