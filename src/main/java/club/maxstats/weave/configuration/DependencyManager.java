@@ -1,6 +1,9 @@
-package club.maxstats.weave.util;
+package club.maxstats.weave.configuration;
 
+import club.maxstats.weave.configuration.provider.MinecraftProvider;
 import club.maxstats.weave.remapping.NotchToMCPRemapper;
+import club.maxstats.weave.util.Constants;
+import club.maxstats.weave.util.Utils;
 import org.gradle.api.Project;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -16,33 +19,42 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 
 public class DependencyManager {
+    /*TODO Replace 1.8.9 with version provided by extension */
+    String version = "1.8.9";
     private final Project project;
+
     public DependencyManager(Project project) {
         this.project = project;
     }
 
     public void pullDeps() {
-        /* Hi */
         this.addMinecraftAssets();
         this.addMappedMinecraft();
     }
 
     public void addMinecraftAssets() {
+        new MinecraftProvider().provide();
 
+        String versionPath = Constants.CACHE_DIR + "/" + this.version + "/libraries";
+
+        this.project.getDependencies().add("compileOnly", this.project.fileTree(versionPath).include("*.jar"));
     }
 
     public void addMappedMinecraft() {
         try {
-            JarFile mcJar   = new JarFile(Utils.getMinecraftJar());
+            String versionPath = Constants.CACHE_DIR + "/" + this.version;
+
+            JarFile mcJar   = new JarFile(Utils.getMinecraftJar(this.version));
             Enumeration<? extends JarEntry> entries = mcJar.entries();
 
-            File outputDir = new File(Constants.MC_CACHE_DIR, "minecraft-mapped.jar");
-            if (!outputDir.exists()) {
-                outputDir.getParentFile().mkdirs();
-                outputDir.createNewFile();
+            File output = new File(versionPath, "minecraft-mapped.jar");
+            if (!output.exists() /* TODO create checksums for each mapped jar and compare to the jar file */) {
+                output.createNewFile();
+            } else {
+                return;
             }
 
-            JarOutputStream jos = new JarOutputStream(new FileOutputStream(outputDir));
+            JarOutputStream jos = new JarOutputStream(new FileOutputStream(output));
 
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
@@ -69,7 +81,7 @@ public class DependencyManager {
 
             jos.close();
 
-            this.project.getDependencies().add("compileOnly", this.project.fileTree(Constants.MC_CACHE_DIR).include("*.jar"));
+            this.project.getDependencies().add("compileOnly", this.project.fileTree(versionPath).include("minecraft-mapped.jar"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
