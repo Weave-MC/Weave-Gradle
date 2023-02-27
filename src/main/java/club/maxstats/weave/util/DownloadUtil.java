@@ -17,6 +17,12 @@ import java.util.concurrent.TimeUnit;
 
 public class DownloadUtil {
 
+    /**
+     * Grabs a {@link JsonObject} from the inputted argument.
+     *
+     * @param url The URL to fetch our JSON from.
+     * @return our {@link JsonObject} parsed through {@link InputStreamReader}.
+     */
     public static JsonObject getJsonFromURL(String url) {
         try {
             return JsonParser.parseReader(new InputStreamReader(new URL(url).openConnection().getInputStream())).getAsJsonObject();
@@ -26,6 +32,12 @@ public class DownloadUtil {
         }
     }
 
+    /**
+     * Returns the SHA1 checksum of the file as a {@link String}.
+     *
+     * @param filePath The path to the file.
+     * @return the SHA1 checksum of the file.
+     */
     private static String checksum(String filePath) {
         try {
             File file = new File(filePath);
@@ -58,6 +70,12 @@ public class DownloadUtil {
         return "";
     }
 
+    /**
+     * Downloads a file from any URL to the user specified directory.
+     *
+     * @param url The URL to download from.
+     * @param destinationPath The path/directory to download to.
+     */
     public static void download(String url, String destinationPath) {
         try {
             String fileName = url.substring(url.lastIndexOf("/") + 1);
@@ -71,6 +89,13 @@ public class DownloadUtil {
         }
     }
 
+    /**
+     * Downloads and checksums the file.
+     *
+     * @param url The URL to download from.
+     * @param checksum The checksum to compare to.
+     * @param destinationPath The path/directory to download to.
+     */
     public static void downloadAndChecksum(String url, String checksum, String destinationPath) {
         try {
             String fileName = url.substring(url.lastIndexOf("/") + 1);
@@ -89,6 +114,13 @@ public class DownloadUtil {
         }
     }
 
+    /**
+     * Downloads and replaces in async.
+     *
+     * @param urls The URLs to download from.
+     * @param destinationPath The path/directory to download to.
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void downloadMultipleAsync(String[] urls, String destinationPath) {
         try {
             ExecutorService pool = Executors.newFixedThreadPool(urls.length);
@@ -103,6 +135,7 @@ public class DownloadUtil {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void downloadAndChecksumMultipleAsync(Map<String, String> urlChecksumMap, String destinationPath) {
         try {
             ExecutorService pool = Executors.newFixedThreadPool(urlChecksumMap.size());
@@ -145,4 +178,5 @@ public class DownloadUtil {
             }
         }
     }
+
 }
