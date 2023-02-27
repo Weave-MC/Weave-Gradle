@@ -13,7 +13,6 @@ public class AbstractPlugin implements Plugin<Project> {
     protected Project project;
 
     @Override
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void apply(Project target) {
         project = target;
 
