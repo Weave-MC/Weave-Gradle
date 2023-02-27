@@ -33,7 +33,7 @@ public class DependencyManager {
     }
 
     public void addMinecraftAssets() {
-        new MinecraftProvider().provide();
+        new MinecraftProvider(this.project, "1.8.9").provide();
 
         String versionPath = Constants.CACHE_DIR + "/" + this.version + "/libraries";
 

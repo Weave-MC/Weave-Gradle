@@ -4,12 +4,19 @@ import club.maxstats.weave.util.Constants;
 import club.maxstats.weave.util.DownloadUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.gradle.api.Project;
 
 public class MinecraftProvider {
     /*TODO Replace 1.8.9 with version specified by extension */
-    private String version = "1.8.9";
+    private String version;
     private JsonObject versionJson;
     private String downloadPath;
+    private Project project;
+
+    public MinecraftProvider(Project project, String version) {
+        this.project = project;
+        this.version = version;
+    }
 
     public void provide() {
         JsonObject manifestJson = DownloadUtil.getJsonFromURL("https://launchermeta.mojang.com/mc/game/version_manifest_v2.json");
@@ -48,4 +55,5 @@ public class MinecraftProvider {
     public String getVersion() { return this.version; }
     public String getDownloadPath() { return this.downloadPath; }
     public JsonObject getVersionJson() { return this.versionJson; }
+    public Project getProject() { return this.project; }
 }
