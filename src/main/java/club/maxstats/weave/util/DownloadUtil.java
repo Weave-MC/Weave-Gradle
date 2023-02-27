@@ -53,8 +53,7 @@ public class DownloadUtil {
             return hex.toString();
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ignored) {
-        }
+        } catch (NoSuchAlgorithmException ignored) {}
 
         return "";
     }
@@ -92,28 +91,28 @@ public class DownloadUtil {
 
     public static void downloadMultipleAsync(String[] urls, String destinationPath) {
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(urls.length);
+            ExecutorService pool = Executors.newFixedThreadPool(urls.length);
 
             for (String url : urls) {
-                executor.submit(new DownloadTask(url, destinationPath));
+                pool.submit(new DownloadTask(url, destinationPath));
             }
 
-            executor.shutdown();
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            pool.shutdown();
+            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         } catch (InterruptedException ignored) {
         }
     }
 
     public static void downloadAndChecksumMultipleAsync(Map<String, String> urlChecksumMap, String destinationPath) {
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(urlChecksumMap.size());
+            ExecutorService pool = Executors.newFixedThreadPool(urlChecksumMap.size());
 
             for (Map.Entry<String, String> entry : urlChecksumMap.entrySet()) {
-                executor.submit(new DownloadTask(entry.getKey(), entry.getValue(), destinationPath));
+                pool.submit(new DownloadTask(entry.getKey(), entry.getValue(), destinationPath));
             }
 
-            executor.shutdown();
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            pool.shutdown();
+            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         } catch (InterruptedException ignored) {
         }
     }
