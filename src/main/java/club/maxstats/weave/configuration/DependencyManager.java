@@ -46,8 +46,7 @@ public class DependencyManager {
     public void addMappedMinecraft() {
         try {
             String versionPath = Constants.CACHE_DIR + "/" + this.version;
-
-            JarFile mcJar   = new JarFile(Utils.getMinecraftJar(this.version));
+            JarFile      mcJar = new JarFile(Utils.getMinecraftJar(this.version));
             Enumeration<? extends JarEntry> entries = mcJar.entries();
 
             File output = new File(versionPath, "minecraft-mapped.jar");
