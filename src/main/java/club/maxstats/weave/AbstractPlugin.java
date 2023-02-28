@@ -5,8 +5,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.plugins.ide.eclipse.model.EclipseModel;
-import org.gradle.plugins.ide.idea.model.IdeaModel;
 
 public class AbstractPlugin implements Plugin<Project> {
 

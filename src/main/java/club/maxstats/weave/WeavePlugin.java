@@ -1,5 +1,6 @@
 package club.maxstats.weave;
 
+import club.maxstats.weave.configuration.WeaveMinecraftExtension;
 import lombok.NonNull;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -27,6 +28,8 @@ public class WeavePlugin extends AbstractPlugin {
         project.apply(Map.of("plugin", "idea"));
         project.apply(Map.of("plugin", "eclipse"));
         project.apply(Map.of("plugin", "java"));
+
+        project.getExtensions().create("minecraft", WeaveMinecraftExtension.class);
 
         super.apply(project);
     }

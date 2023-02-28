@@ -19,21 +19,28 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 
 public class DependencyManager {
-    /*TODO Replace 1.8.9 with version provided by extension */
-    String version = "1.8.9";
+    private final String version;
+    private final String mappings;
     private final Project project;
 
     public DependencyManager(Project project) {
         this.project = project;
+
+        WeaveMinecraftExtension ext = WeaveMinecraftExtension.get(project);
+        this.version = ext.getVersion();
+        this.mappings = ext.getMappings();
     }
 
     public void pullDeps() {
+        if (this.version.isEmpty() || this.mappings.isEmpty())
+            return;
+
         this.addMinecraftAssets();
         this.addMappedMinecraft();
     }
 
     public void addMinecraftAssets() {
-        new MinecraftProvider(this.project, "1.8.9").provide();
+        new MinecraftProvider(this.project, this.version).provide();
 
         String versionPath = Constants.CACHE_DIR + "/" + this.version + "/libraries";
 

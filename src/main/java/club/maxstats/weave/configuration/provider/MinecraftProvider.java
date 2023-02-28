@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import org.gradle.api.Project;
 
 public class MinecraftProvider {
-    /*TODO Replace 1.8.9 with version specified by extension */
     private String version;
     private JsonObject versionJson;
     private String downloadPath;
