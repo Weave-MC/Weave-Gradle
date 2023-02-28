@@ -32,7 +32,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("loom") {
-            id = "$group"
+            id = projectGroup
             implementationClass = "${group}.WeavePlugin"
         }
     }
@@ -40,4 +40,36 @@ gradlePlugin {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = projectGroup
+            artifactId = "weave"
+            version = projectVersion
+
+            from(components["java"])
+        }
+
+        create<MavenPublication>("plugin") {
+            groupId = projectGroup
+            artifactId = "weave-gradle-plugin"
+            version = projectVersion
+
+            from(components["java-gradle-plugin"])
+        }
+    }
+
+
+    repositories {
+        maven {
+            name = ""
+            url = uri("")
+            credentials {
+                username = ""
+                password = ""
+            }
+        }
+    }
 }

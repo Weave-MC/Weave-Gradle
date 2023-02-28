@@ -5,7 +5,8 @@ import com.google.gson.JsonElement;
 import org.gradle.api.Project;
 
 public class MinecraftLibraryProvider {
-    private MinecraftProvider minecraftProvider;
+
+    private final MinecraftProvider minecraftProvider;
     public MinecraftLibraryProvider(MinecraftProvider minecraftProvider) {
         this.minecraftProvider = minecraftProvider;
     }
@@ -28,4 +29,5 @@ public class MinecraftLibraryProvider {
             project.getDependencies().add("compileOnly", name);
         }
     }
+
 }

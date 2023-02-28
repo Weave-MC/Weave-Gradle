@@ -21,10 +21,7 @@ public class NotchToMCPRemapper extends Remapper {
     @Override
     public String map(String internalName) {
         String mappedClassName = Mappings.getMappedClassName(internalName);
-        if (mappedClassName != null)
-            return mappedClassName;
-
-        return super.map(internalName);
+        return mappedClassName != null ? mappedClassName : super.map(internalName);
     }
 
     /**
