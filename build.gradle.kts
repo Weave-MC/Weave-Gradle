@@ -32,7 +32,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("loom") {
-            id = "$group"
+            id = projectGroup
             implementationClass = "${group}.WeavePlugin"
         }
     }
