@@ -1,3 +1,4 @@
+import java.util.Properties
 plugins {
     idea
     java
@@ -12,7 +13,9 @@ val projectGroup:   String by project
 group   = projectGroup
 version = projectVersion
 
-repositories.mavenCentral()
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
@@ -31,45 +34,32 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("loom") {
-            id = projectGroup
+        create("weave") {
+            // Using jitpack.io for the time being
+            id = "com.github.weave-mc.weave"
+            displayName = "Weave Plugin"
+            description = "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"
             implementationClass = "${group}.WeavePlugin"
         }
     }
 }
 
+// Use Gradle Plugin Portal later on when the plugin is finished
+//val publishProps = Properties()
+//file("gradle-publish.properties").inputStream().use { publishProps.load(it) }
+//
+//publishing {
+//    repositories {
+//        maven {
+//            url = uri("https://plugins.gradle.org/m2/")
+//            credentials {
+//                username = publishProps.getProperty("publishKey")
+//                password = publishProps.getProperty("publishSecret")
+//            }
+//        }
+//    }
+//}
+
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = projectGroup
-            artifactId = "weave"
-            version = projectVersion
-
-            from(components["java"])
-        }
-
-        create<MavenPublication>("plugin") {
-            groupId = projectGroup
-            artifactId = "weave-gradle-plugin"
-            version = projectVersion
-
-            from(components["java-gradle-plugin"])
-        }
-    }
-
-
-    repositories {
-        maven {
-            name = ""
-            url = uri("")
-            credentials {
-                username = ""
-                password = ""
-            }
-        }
-    }
 }
