@@ -57,36 +57,33 @@ public class DependencyManager {
             File output = new File(versionPath, "minecraft-mapped.jar");
             if (!output.exists() /* TODO create checksums for each mapped jar and compare to the jar file */) {
                 output.createNewFile();
-            } else {
-                return;
-            }
+                JarOutputStream jos = new JarOutputStream(new FileOutputStream(output));
 
-            JarOutputStream jos = new JarOutputStream(new FileOutputStream(output));
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (!entry.getName().endsWith(".class")) {
+                        continue;
+                    }
 
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                if (!entry.getName().endsWith(".class")) {
-                    continue;
+                    ClassReader cr = new ClassReader(mcJar.getInputStream(entry));
+                    ClassWriter cw = new ClassWriter(0);
+
+                    Remapper remapper      = new NotchToMCPRemapper();
+                    ClassRemapper classRemapper = new ClassRemapper(cw, remapper);
+                    cr.accept(classRemapper, 0);
+
+                    String mappedName = remapper.map(cr.getClassName());
+                    byte[] bytes = cw.toByteArray();
+
+                    JarEntry newEntry = new JarEntry(mappedName + ".class");
+                    newEntry.setSize(bytes.length);
+                    jos.putNextEntry(newEntry);
+                    jos.write(bytes);
+                    jos.closeEntry();
                 }
 
-                ClassReader cr = new ClassReader(mcJar.getInputStream(entry));
-                ClassWriter cw = new ClassWriter(0);
-
-                Remapper remapper      = new NotchToMCPRemapper();
-                ClassRemapper classRemapper = new ClassRemapper(cw, remapper);
-                cr.accept(classRemapper, 0);
-
-                String mappedName = remapper.map(cr.getClassName());
-                byte[] bytes = cw.toByteArray();
-
-                JarEntry newEntry = new JarEntry(mappedName + ".class");
-                newEntry.setSize(bytes.length);
-                jos.putNextEntry(newEntry);
-                jos.write(bytes);
-                jos.closeEntry();
+                jos.close();
             }
-
-            jos.close();
 
             this.project.getDependencies().add("compileOnly", this.project.fileTree(versionPath).include("minecraft-mapped.jar"));
         } catch (IOException ex) {
