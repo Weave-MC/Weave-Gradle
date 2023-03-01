@@ -1,4 +1,3 @@
-import java.util.Properties
 plugins {
     idea
     java
@@ -12,6 +11,11 @@ val projectGroup:   String by project
 
 group   = projectGroup
 version = projectVersion
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()
@@ -60,6 +64,6 @@ gradlePlugin {
 //    }
 //}
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}
+//tasks.getByName<Test>("test") {
+//    useJUnitPlatform()
+//}
