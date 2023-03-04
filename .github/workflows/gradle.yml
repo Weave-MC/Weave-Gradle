@@ -19,8 +19,8 @@ on:
             - '.editorconfig'
 
 concurrency:
-    # Maximum of one running wrokflow per pull request on source branches.
-    # Cancel an old run if an action is re-run. 
+    # Maximum of one running workflow per pull request on source branches.
+    # Cancel an old run if an action is re-run.
     group: ${{ github.head_ref || format('{0}-{1}', github.ref, github.run_number) }}
     cancel-in-progress: true
 

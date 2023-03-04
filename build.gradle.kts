@@ -49,21 +49,21 @@ gradlePlugin {
 }
 
 // Use Gradle Plugin Portal later on when the plugin is finished
-//val publishProps = Properties()
-//file("gradle-publish.properties").inputStream().use { publishProps.load(it) }
+// val publishProps = Properties()
+// file("gradle-publish.properties").inputStream().use { publishProps.load(it) }
 //
-//publishing {
-//    repositories {
-//        maven {
-//            url = uri("https://plugins.gradle.org/m2/")
-//            credentials {
-//                username = publishProps.getProperty("publishKey")
-//                password = publishProps.getProperty("publishSecret")
-//            }
-//        }
-//    }
-//}
-
-//tasks.getByName<Test>("test") {
-//    useJUnitPlatform()
-//}
+// publishing {
+//     repositories {
+//         maven {
+//             url = uri("https://plugins.gradle.org/m2/")
+//             credentials {
+//                 username = publishProps.getProperty("publishKey")
+//                 password = publishProps.getProperty("publishSecret")
+//             }
+//         }
+//     }
+// }
+//
+// tasks.getByName<Test>("test") {
+//     useJUnitPlatform()
+// }
