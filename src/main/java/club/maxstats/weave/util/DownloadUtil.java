@@ -151,9 +151,9 @@ public class DownloadUtil {
     }
 
     private static class DownloadTask implements Runnable {
-        private String url;
-        private String destinationPath;
-        private String checksum = null;
+        private final String url;
+        private final String destinationPath;
+        private       String checksum = null;
 
         public DownloadTask(String url, String destinationPath) {
             this.url = url;

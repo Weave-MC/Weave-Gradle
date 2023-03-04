@@ -7,10 +7,11 @@ import com.google.gson.JsonObject;
 import org.gradle.api.Project;
 
 public class MinecraftProvider {
-    private String version;
-    private JsonObject versionJson;
-    private String downloadPath;
-    private Project project;
+
+    private final String     version;
+    private       JsonObject versionJson;
+    private       String     downloadPath;
+    private final Project    project;
 
     public MinecraftProvider(Project project, String version) {
         this.project = project;
@@ -51,8 +52,32 @@ public class MinecraftProvider {
         }
     }
 
-    public String getVersion() { return this.version; }
-    public String getDownloadPath() { return this.downloadPath; }
-    public JsonObject getVersionJson() { return this.versionJson; }
-    public Project getProject() { return this.project; }
+    /**
+     * @return The version of Minecraft.
+     */
+    public String getVersion() {
+        return this.version;
+    }
+
+    /**
+     * @return The path to the downloaded Minecraft jar.
+     */
+    public String getDownloadPath() {
+        return this.downloadPath;
+    }
+
+    /**
+     * @return The version as a {@link JsonObject}.
+     */
+    public JsonObject getVersionJson() {
+        return this.versionJson;
+    }
+
+    /**
+     * @return The {@link Project} instance.
+     */
+    public Project getProject() {
+        return this.project;
+    }
+
 }
