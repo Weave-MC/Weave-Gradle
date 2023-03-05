@@ -25,8 +25,6 @@ java --version # should output some JDK 17.
 
 ### Installation
 
-To install Weave-Loader, you can either download a pre-built release from the [releases page](https://github.com/Weave-MC/Weave-Loader/releases), or build it yourself from source.
-
 #### Building with Gradle
 
 - `git clone` the project, this can be achieved by installing [git][git], then running
@@ -79,10 +77,9 @@ dependencies {
 }
 ```
 
-Replace `${VERSION}` with the version of Weave-Loader in the Build Reference. (soon:tm:)
+> Replace `${VERSION}` with the version of Weave-Loader in the Build Reference. (soon:tm:)
 
 ---
-
 
 <div align="right">
 
