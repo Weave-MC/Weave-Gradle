@@ -1,5 +1,6 @@
 package club.maxstats.weave.configuration;
 
+import club.maxstats.weave.configuration.provider.MappingsProvider;
 import club.maxstats.weave.configuration.provider.MinecraftProvider;
 import club.maxstats.weave.remapping.NotchToMCPRemapper;
 import club.maxstats.weave.util.Constants;
@@ -20,7 +21,6 @@ import java.util.jar.JarOutputStream;
 
 public class DependencyManager {
     private final String version;
-    private final String mappings;
     private final Project project;
 
     public DependencyManager(Project project) {
@@ -28,11 +28,10 @@ public class DependencyManager {
 
         WeaveMinecraftExtension ext = WeaveMinecraftExtension.get(project);
         this.version = ext.getVersion();
-        this.mappings = ext.getMappings();
     }
 
     public void pullDeps() {
-        if (this.version.isEmpty() || this.mappings.isEmpty())
+        if (this.version.isEmpty())
             return;
 
         this.addMinecraftAssets();
@@ -41,6 +40,7 @@ public class DependencyManager {
 
     public void addMinecraftAssets() {
         new MinecraftProvider(this.project, this.version).provide();
+        new MappingsProvider(this.project, this.version).provide();
 
         String versionPath = Constants.CACHE_DIR + "/" + this.version + "/libraries";
 

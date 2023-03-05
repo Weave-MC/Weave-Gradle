@@ -1,121 +1,121 @@
 package club.maxstats.weave.remapping;
 
-import lombok.ToString;
 import lombok.experimental.UtilityClass;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-record Method(String name, String desc) {}
-
-/**
- * Represents a mapped class.
- *
- * @author Max (<a href="https://github.com/exejar">...</a>)
- */
-@ToString
-class MappedClass {
-
-    public       String              name;
-    public final Map<Method, Method> methods = new HashMap<>();
-    public final Map<String, String> fields  = new HashMap<>();
-
-    public MappedClass(String name) {
-        this.name = name;
-    }
-
-}
-
-/**
- * Utility class for mapping obfuscated names to MCP names.
- *
- * @author Max (<a href="https://github.com/exejar">...</a>)
- */
 @UtilityClass
 public class Mappings {
+    private final Map<String, String> classMap = new HashMap<>();
+    /* Key is Method Class Owner + / + Method Name + Method Description in Notch mappings e.g. "ave/Z()V"  */
+    private final Map<String, String> methodMap = new HashMap<>();
+    /* Key is Field Class Owner + / + Field Name in Notch mappings e.g. "ave/A" */
+    private final Map<String, String> fieldMap = new HashMap<>();
 
-    static final int EXIT_FAILURE = 1;
-
-    private final Map<String, MappedClass> classMap = new HashMap<>();
-
-    /**
-     * Retrieves the mapped class from the class map.
-     *
-     * @param notchName The obfuscated class name.
-     * @return          The mapped class.
-     */
-    public MappedClass getMappedClass(String notchName) {
-        return classMap.get(notchName);
+    public String getMappedClass(String notchClass) {
+        return classMap.get(notchClass);
     }
 
-    /**
-     * Retrieves the mapped class name from {@link #getMappedClass(String)} and returns the value as a String.
-     *
-     * @param notchName The obfuscated class name.
-     * @return The mapped class name from {@link MappedClass#getClass()} as a String.
-     */
-    public String getMappedClassName(String notchName) {
-        MappedClass mappedClass = getMappedClass(notchName);
-
-        if (mappedClass == null) return null;
-        return mappedClass.name;
+    public String getMappedMethod(String notchMethod) {
+        return methodMap.get(notchMethod);
     }
 
-    static {
-        InputStream joinedStream = Mappings.class.getResourceAsStream("/mappings");
-        if (joinedStream == null) {
-            System.err.println("Mappings stream is null");
-            System.exit(EXIT_FAILURE);
+    public String getMappedField(String notchField) {
+        return fieldMap.get(notchField);
+    }
+
+    public void printTest() {
+        for (Map.Entry<String, String> classEntry : classMap.entrySet()) {
+            System.out.println("Classes - Vanilla: " + classEntry.getKey() + " MCP: " + classEntry.getValue());
         }
+        for (Map.Entry<String, String> methodEntry : methodMap.entrySet()) {
+            System.out.println("Methods - Vanilla: " + methodEntry.getKey() + " MCP: " + methodEntry.getValue());
+        }
+        for (Map.Entry<String, String> fieldEntry : fieldMap.entrySet()) {
+            System.out.println("Fields - Vanilla: " + fieldEntry.getKey() + " MCP: " + fieldEntry.getValue());
+        }
+    }
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(joinedStream));
-        try {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String type = line.substring(0, 2);
-                String content = line.substring(4);
-                switch (type) {
-                    case "CL" -> {
-                        String[]    split    = content.split(" ", 2);
-                        MappedClass oldClass = classMap.get(split[0]);
-                        if (oldClass != null) oldClass.name = split[1];
-                        else classMap.put(split[0], new MappedClass(split[1]));
-                    }
-                    case "FD" -> {
-                        String[] split         = content.split(" ", 2);
-                        String   oldFieldClass = split[0];
-                        int      lastSlash     = oldFieldClass.lastIndexOf('/');
-                        String   oldClass      = oldFieldClass.substring(0, lastSlash);
-                        String   oldField      = oldFieldClass.substring(lastSlash + 1);
+    public static void createMappings(String joinedPath, String methodsPath, String fieldsPath) {
+        File joinedFile = new File(joinedPath);
+        File methodsFile = new File(methodsPath);
+        File fieldsFile = new File(fieldsPath);
 
-                        String newFieldClass = split[1];
-                        lastSlash = newFieldClass.lastIndexOf('/');
-                        String newField = newFieldClass.substring(lastSlash + 1);
+        // srg : notch joined + mcp description
+        Map<String, String> srgToNotchMethods = new HashMap<>();
+        // srg : notch joined
+        Map<String, String> srgToNotchFields = new HashMap<>();
 
-                        classMap.computeIfAbsent(oldClass, MappedClass::new).fields.put(oldField, newField);
-                    }
-                    case "MD" -> {
-                        String[] split          = content.split(" ", 4);
-                        String   oldMethodClass = split[0];
-                        int      lastSlash      = oldMethodClass.lastIndexOf('/');
-                        String   oldClass       = oldMethodClass.substring(0, lastSlash);
-                        Method   oldMethod      = new Method(oldMethodClass.substring(lastSlash + 1), split[1]);
+        try (InputStream joinedStream = new FileInputStream(joinedFile)) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(joinedStream))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String type = line.substring(0, 2);
+                    String content = line.substring(4);
+                    String[] split = content.split(" ");
 
-                        String newMethodClass = split[2];
-                        lastSlash = newMethodClass.lastIndexOf('/');
-                        Method newMethod = new Method(newMethodClass.substring(lastSlash + 1), split[3]);
-
-                        classMap.computeIfAbsent(oldClass, MappedClass::new).methods.put(oldMethod, newMethod);
+                    switch (type) {
+                        case "CL" -> classMap.put(split[0], split[1]);
+                        case "FD" -> srgToNotchFields.put(split[1].substring(split[1].lastIndexOf('/') + 1), split[0]);
+                        case "MD" -> srgToNotchMethods.put(split[2].substring(split[2].lastIndexOf('/') + 1), split[0] + split[1]);
                     }
                 }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
 
+        try (InputStream methodsStream = new FileInputStream(methodsFile)) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(methodsStream))) {
+                String line;
+                while((line = br.readLine()) != null) {
+                    // Skip the first line
+                    if (line.contains("searge"))
+                        continue;
+
+                    // Srg,Mcp
+                    String[] split = line.split(",");
+                    String notchJoined = srgToNotchMethods.get(split[0]);
+
+                    System.out.println(split[0]);
+
+                    String notchOwner = notchJoined.substring(0, notchJoined.indexOf('/'));
+                    String notchMethod = notchJoined.substring(notchJoined.indexOf('/') + 1);
+
+                    String mcpMethodName = split[1];
+
+                    methodMap.put(notchOwner + '/' + notchMethod, mcpMethodName);
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        try (InputStream fieldsStream = new FileInputStream(fieldsFile)) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(fieldsStream))) {
+                String line;
+                while((line = br.readLine()) != null) {
+                    // Skip the first line
+                    if (line.contains("searge"))
+                        continue;
+
+                    // Srg,Mcp
+                    String[] split = line.split(",");
+                    String notchJoined = srgToNotchFields.get(split[0]);
+
+                    String notchOwner = notchJoined.substring(0, notchJoined.indexOf('/'));
+                    String notchField = notchJoined.substring(notchJoined.indexOf('/') + 1);
+                    String mcpField = split[1];
+
+                    fieldMap.put(notchOwner + '/' + notchField, mcpField);
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        printTest();
+    }
 }
