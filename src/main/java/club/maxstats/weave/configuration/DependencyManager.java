@@ -47,6 +47,7 @@ public class DependencyManager {
         this.project.getDependencies().add("compileOnly", this.project.fileTree(versionPath).include("*.jar"));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void addMappedMinecraft() {
         try {
             String versionPath = Constants.CACHE_DIR + "/" + this.version;

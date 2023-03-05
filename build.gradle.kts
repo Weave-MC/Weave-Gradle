@@ -28,7 +28,7 @@ dependencies {
     implementation("org.ow2.asm:asm:9.2")
     implementation("org.ow2.asm:asm-tree:9.2")
     implementation("org.ow2.asm:asm-commons:9.2")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+//  implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("commons-io:commons-io:2.11.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
@@ -49,21 +49,21 @@ gradlePlugin {
 }
 
 // Use Gradle Plugin Portal later on when the plugin is finished
-//val publishProps = Properties()
-//file("gradle-publish.properties").inputStream().use { publishProps.load(it) }
+// val publishProps = Properties()
+// file("gradle-publish.properties").inputStream().use { publishProps.load(it) }
 //
-//publishing {
-//    repositories {
-//        maven {
-//            url = uri("https://plugins.gradle.org/m2/")
-//            credentials {
-//                username = publishProps.getProperty("publishKey")
-//                password = publishProps.getProperty("publishSecret")
-//            }
-//        }
-//    }
-//}
-
-//tasks.getByName<Test>("test") {
-//    useJUnitPlatform()
-//}
+// publishing {
+//     repositories {
+//         maven {
+//             url = uri("https://plugins.gradle.org/m2/")
+//             credentials {
+//                 username = publishProps.getProperty("publishKey")
+//                 password = publishProps.getProperty("publishSecret")
+//             }
+//         }
+//     }
+// }
+//
+// tasks.getByName<Test>("test") {
+//     useJUnitPlatform()
+// }
