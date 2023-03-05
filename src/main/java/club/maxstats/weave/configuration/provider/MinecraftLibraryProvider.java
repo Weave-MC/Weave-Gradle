@@ -7,13 +7,14 @@ import org.gradle.api.Project;
 public class MinecraftLibraryProvider {
 
     private final MinecraftProvider minecraftProvider;
+
     public MinecraftLibraryProvider(MinecraftProvider minecraftProvider) {
         this.minecraftProvider = minecraftProvider;
     }
 
     public void provide() {
         JsonArray librariesArray = this.minecraftProvider.getVersionJson().get("libraries").getAsJsonArray();
-        Project project = this.minecraftProvider.getProject();
+        Project   project        = this.minecraftProvider.getProject();
 
         project.getRepositories().maven(mavenArtifactRepository -> {
             mavenArtifactRepository.setName("mojang");

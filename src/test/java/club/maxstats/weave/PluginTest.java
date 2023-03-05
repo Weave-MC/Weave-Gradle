@@ -1,11 +1,9 @@
 package club.maxstats.weave;
 
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PluginTest {
@@ -18,5 +16,5 @@ public class PluginTest {
         assertTrue(project.getPluginManager().hasPlugin("club.maxstats.weave"));
 //      assertNotNull(project.getTasks().getByName("setupDecompWorkspace"));
     }
-    
+
 }
