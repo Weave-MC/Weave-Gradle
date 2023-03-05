@@ -20,7 +20,7 @@ public class NotchToMCPRemapper extends Remapper {
      */
     @Override
     public String map(String internalName) {
-        String mappedClassName = Mappings.getMappedClassName(internalName);
+        String mappedClassName = Mappings.getMappedClass(internalName);
         return mappedClassName != null ? mappedClassName : super.map(internalName);
     }
 
@@ -34,15 +34,8 @@ public class NotchToMCPRemapper extends Remapper {
      */
     @Override
     public String mapMethodName(String owner, String name, String descriptor) {
-        MappedClass mappedClass = Mappings.getMappedClass(owner);
-
-        if (mappedClass != null) {
-            Method mappedMethod = mappedClass.methods.get(new Method(name, descriptor));
-            if (mappedMethod != null)
-                return mappedMethod.name();
-        }
-
-        return super.mapMethodName(owner, name, descriptor);
+        String mappedMethodName = Mappings.getMappedMethod(owner + '/' + name + descriptor);
+        return mappedMethodName != null ? mappedMethodName : super.mapMethodName(owner, name, descriptor);
     }
 
     /**
@@ -55,15 +48,8 @@ public class NotchToMCPRemapper extends Remapper {
      */
     @Override
     public String mapFieldName(String owner, String name, String descriptor) {
-        MappedClass mappedClass = Mappings.getMappedClass(owner);
-
-        if (mappedClass != null) {
-            String mappedField = mappedClass.fields.get(name);
-            if (mappedField != null)
-                return mappedField;
-        }
-
-        return super.mapFieldName(owner, name, descriptor);
+        String mappedFieldName = Mappings.getMappedField(owner + '/' + name);
+        return mappedFieldName != null ? mappedFieldName : super.mapFieldName(owner, name, descriptor);
     }
 
 }
