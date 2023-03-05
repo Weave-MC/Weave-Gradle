@@ -136,6 +136,11 @@ public class DownloadUtil {
 
                     byte[] content = entryContentStream.toByteArray();
 
+                    /* Prevents directory traversal attacks.
+                     * CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') */
+                    if (entry.getName().contains(".."))
+                        continue;
+
                     Path path = Paths.get(destinationPath + '/' + entry.getName());
                     Files.createDirectories(path.getParent());
                     Files.write(path, content);
