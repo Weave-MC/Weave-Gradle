@@ -20,6 +20,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 
 public class DependencyManager {
+
     private final String version;
     private final Project project;
 
@@ -30,6 +31,10 @@ public class DependencyManager {
         this.version = ext.getVersion();
     }
 
+    /**
+     * Pulls dependencies from {@link #addMinecraftAssets()} 
+     * and {@link #addMappedMinecraft()}.
+     */
     public void pullDeps() {
         if (this.version.isEmpty())
             return;
@@ -38,6 +43,10 @@ public class DependencyManager {
         this.addMappedMinecraft();
     }
 
+    /**
+     * Adds Minecraft as a dependency by providing the jar to the
+     * projects file tree. 
+     */
     public void addMinecraftAssets() {
         new MinecraftProvider(this.project, this.version).provide();
         new MappingsProvider(this.project, this.version).provide();
@@ -62,6 +71,7 @@ public class DependencyManager {
 
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
+                    
                     if (!entry.getName().endsWith(".class")) {
                         continue;
                     }
@@ -69,7 +79,7 @@ public class DependencyManager {
                     ClassReader cr = new ClassReader(mcJar.getInputStream(entry));
                     ClassWriter cw = new ClassWriter(0);
 
-                    Remapper remapper      = new NotchToMCPRemapper();
+                    Remapper remapper           = new NotchToMCPRemapper();
                     ClassRemapper classRemapper = new ClassRemapper(cw, remapper);
                     cr.accept(classRemapper, 0);
 
