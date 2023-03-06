@@ -8,20 +8,20 @@ import java.util.Map;
 
 @UtilityClass
 public class Mappings {
-    
+
     private final Map<String, String> classMap = new HashMap<>();
-    
+
     /**
      * Key is Method Class Owner + "/" + Method Name + Method Description in Notch mappings.
      * <p>
-     * ex. "ave/Z()V"  
+     * ex. "ave/Z()V"
      */
     private final Map<String, String> methodMap = new HashMap<>();
-    
+
     /**
      * Key is Field Class Owner + "/" + Field Name in Notch mappings.
      * <p>
-     * ex. "ave/A" 
+     * ex. "ave/A"
      */
     private final Map<String, String> fieldMap = new HashMap<>();
 
@@ -54,10 +54,11 @@ public class Mappings {
         File methodsFile = new File(methodsPath);
         File fieldsFile = new File(fieldsPath);
 
-        /* SRG : Notch joined + MCP descriptors */
-        Map<String, String> srgToNotchMethods = new HashMap<>();
-        /* SRG : Notch joined */
-        Map<String, String> srgToNotchFields = new HashMap<>();
+        Map<String, String> srgToMcpMethods = new HashMap<>();
+        Map<String, String> srgToMcpFields = new HashMap<>();
+
+        parseCSV(methodsFile, srgToMcpMethods);
+        parseCSV(fieldsFile, srgToMcpFields);
 
         try (InputStream joinedStream = new FileInputStream(joinedFile)) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(joinedStream))) {
@@ -69,8 +70,20 @@ public class Mappings {
 
                     switch (type) {
                         case "CL" -> classMap.put(split[0], split[1]);
-                        case "FD" -> srgToNotchFields.put(split[1].substring(split[1].lastIndexOf('/') + 1), split[0]);
-                        case "MD" -> srgToNotchMethods.put(split[2].substring(split[2].lastIndexOf('/') + 1), split[0] + split[1]);
+                        case "FD" -> {
+                            String fieldJoined = split[0];
+                            String srgName = split[1].substring(split[1].lastIndexOf('/') + 1);
+                            String mcpName = srgToMcpFields.get(srgName);
+
+                            fieldMap.put(fieldJoined, mcpName);
+                        }
+                        case "MD" -> {
+                            String methodJoined = split[0] + split[1];
+                            String srgName = split[2].substring(split[2].lastIndexOf('/') + 1);
+                            String mcpName = srgToMcpMethods.get(srgName);
+
+                            methodMap.put(methodJoined, mcpName);
+                        }
                     }
                 }
             }
@@ -78,33 +91,11 @@ public class Mappings {
             ex.printStackTrace();
         }
 
-        try (InputStream methodsStream = new FileInputStream(methodsFile)) {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(methodsStream))) {
-                String line;
-                while((line = br.readLine()) != null) {
-                    /* Skip the first line. */
-                    if (line.contains("searge"))
-                        continue;
+//        printTest();
+    }
 
-                    /* SRG, MCP */
-                    String[] split = line.split(",");
-                    String notchJoined = srgToNotchMethods.get(split[0]);
-
-                    System.out.println(split[0]);
-
-                    String notchOwner = notchJoined.substring(0, notchJoined.indexOf('/'));
-                    String notchMethod = notchJoined.substring(notchJoined.indexOf('/') + 1);
-
-                    String mcpMethodName = split[1];
-
-                    methodMap.put(notchOwner + '/' + notchMethod, mcpMethodName);
-                }
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        try (InputStream fieldsStream = new FileInputStream(fieldsFile)) {
+    private static void parseCSV(File csvFile, Map<String, String> srgToMcpFields) {
+        try (InputStream fieldsStream = new FileInputStream(csvFile)) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fieldsStream))) {
                 String line;
                 while((line = br.readLine()) != null) {
@@ -114,20 +105,12 @@ public class Mappings {
 
                     /* SRG, MCP */
                     String[] split = line.split(",");
-                    String notchJoined = srgToNotchFields.get(split[0]);
-
-                    String notchOwner = notchJoined.substring(0, notchJoined.indexOf('/'));
-                    String notchField = notchJoined.substring(notchJoined.indexOf('/') + 1);
-                    String mcpField = split[1];
-
-                    fieldMap.put(notchOwner + '/' + notchField, mcpField);
+                    srgToMcpFields.put(split[0], split[1]);
                 }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
-        printTest();
     }
-    
+
 }
