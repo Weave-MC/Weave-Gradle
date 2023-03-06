@@ -8,10 +8,21 @@ import java.util.Map;
 
 @UtilityClass
 public class Mappings {
+    
     private final Map<String, String> classMap = new HashMap<>();
-    /* Key is Method Class Owner + / + Method Name + Method Description in Notch mappings e.g. "ave/Z()V"  */
+    
+    /**
+     * Key is Method Class Owner + / + Method Name + Method Description in Notch mappings 
+     * <p>
+     * ex. "ave/Z()V"  
+     */
     private final Map<String, String> methodMap = new HashMap<>();
-    /* Key is Field Class Owner + / + Field Name in Notch mappings e.g. "ave/A" */
+    
+    /**
+     * Key is Field Class Owner + / + Field Name in Notch mappings 
+     * <p>
+     * ex. "ave/A" 
+     */
     private final Map<String, String> fieldMap = new HashMap<>();
 
     public String getMappedClass(String notchClass) {
@@ -118,4 +129,5 @@ public class Mappings {
 
         printTest();
     }
+    
 }
