@@ -104,5 +104,7 @@ Weave is licensed under the [GNU General Public License Version 3][license].
 
 </div>
 
+[git]:     https://git-scm.com/
+
 [jdk]:     https://www.azul.com/downloads/?version=java-17-lts&package=jdk
 [license]: https://github.com/Weave-MC/Weave-Loader/blob/main/LICENSE
