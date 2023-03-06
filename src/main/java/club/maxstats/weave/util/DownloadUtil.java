@@ -20,6 +20,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DownloadUtil {
+    
+    /**
+     * Marks the end of a {@link BufferedReader} according to
+     * {@link java.io.BufferedReader#markPos)
+     * 
+     * @see java.io.BufferedReader
+     */
+    private static final int EOF = -1;
 
     /**
      * Grabs a {@link JsonObject} from the inputted argument.
@@ -54,7 +62,7 @@ public class DownloadUtil {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
 
-                while ((bytesRead = is.read(buffer)) != -1) {
+                while ((bytesRead = is.read(buffer)) != EOF) {
                     digest.update(buffer, 0, bytesRead);
                 }
             }
