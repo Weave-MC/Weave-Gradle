@@ -77,7 +77,7 @@ public class DownloadUtil {
     /**
      * Downloads a file from any URL to the user specified directory.
      *
-     * @param url The URL to download from.
+     * @param url             The URL to download from.
      * @param destinationPath The path/directory to download to.
      */
     public static String download(String url, String destinationPath) {
@@ -99,8 +99,8 @@ public class DownloadUtil {
     /**
      * Downloads and checksums the file.
      *
-     * @param url The URL to download from.
-     * @param checksum The checksum to compare to.
+     * @param url             The URL to download from.
+     * @param checksum        The checksum to compare to.
      * @param destinationPath The path/directory to download to.
      */
     public static String downloadAndChecksum(String url, String checksum, String destinationPath) {
@@ -187,7 +187,7 @@ public class DownloadUtil {
     /**
      * Downloads and replaces in async.
      *
-     * @param urls The URLs to download from.
+     * @param urls            The URLs to download from.
      * @param destinationPath The path/directory to download to.
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
