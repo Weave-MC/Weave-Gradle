@@ -11,7 +11,6 @@ import org.objectweb.asm.commons.Remapper;
  */
 public class NotchToMCPRemapper extends Remapper {
 
-
     /**
      * Maps a class name from obfuscated to MCP.
      *
