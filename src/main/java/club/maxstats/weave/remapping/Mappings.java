@@ -12,14 +12,14 @@ public class Mappings {
     private final Map<String, String> classMap = new HashMap<>();
     
     /**
-     * Key is Method Class Owner + / + Method Name + Method Description in Notch mappings 
+     * Key is Method Class Owner + "/" + Method Name + Method Description in Notch mappings.
      * <p>
      * ex. "ave/Z()V"  
      */
     private final Map<String, String> methodMap = new HashMap<>();
     
     /**
-     * Key is Field Class Owner + / + Field Name in Notch mappings 
+     * Key is Field Class Owner + "/" + Field Name in Notch mappings.
      * <p>
      * ex. "ave/A" 
      */
@@ -54,9 +54,9 @@ public class Mappings {
         File methodsFile = new File(methodsPath);
         File fieldsFile = new File(fieldsPath);
 
-        // srg : notch joined + mcp description
+        /* SRG : Notch joined + MCP descriptors */
         Map<String, String> srgToNotchMethods = new HashMap<>();
-        // srg : notch joined
+        /* SRG : Notch joined */
         Map<String, String> srgToNotchFields = new HashMap<>();
 
         try (InputStream joinedStream = new FileInputStream(joinedFile)) {
@@ -82,11 +82,11 @@ public class Mappings {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(methodsStream))) {
                 String line;
                 while((line = br.readLine()) != null) {
-                    // Skip the first line
+                    /* Skip the first line. */
                     if (line.contains("searge"))
                         continue;
 
-                    // Srg,Mcp
+                    /* SRG, MCP */
                     String[] split = line.split(",");
                     String notchJoined = srgToNotchMethods.get(split[0]);
 
@@ -108,11 +108,11 @@ public class Mappings {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fieldsStream))) {
                 String line;
                 while((line = br.readLine()) != null) {
-                    // Skip the first line
+                    /* Skip the first line. */
                     if (line.contains("searge"))
                         continue;
 
-                    // Srg,Mcp
+                    /* SRG, MCP */
                     String[] split = line.split(",");
                     String notchJoined = srgToNotchFields.get(split[0]);
 
