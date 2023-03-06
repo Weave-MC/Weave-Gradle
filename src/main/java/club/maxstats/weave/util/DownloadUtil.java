@@ -134,7 +134,7 @@ public class DownloadUtil {
             List<String> paths = new ArrayList<>();
 
             ZipEntry entry = null;
-            while((entry = zipIn.getNextEntry()) != null) {
+            while ((entry = zipIn.getNextEntry()) != null) {
                 try (ByteArrayOutputStream entryContentStream = new ByteArrayOutputStream()) {
                     byte[] buffer = new byte[4096];
                     int len;
@@ -167,7 +167,7 @@ public class DownloadUtil {
     public static String downloadEntryFromZip(String url, String entryName, String destinationPath) {
         try (ZipInputStream zipIn = new ZipInputStream(new URL(url).openStream())) {
             ZipEntry entry;
-            while((entry = zipIn.getNextEntry()) != null) {
+            while ((entry = zipIn.getNextEntry()) != null) {
                 if (entry.getName().equals(entryName)) {
                     try (ByteArrayOutputStream entryContentStream = new ByteArrayOutputStream()) {
                         byte[] buffer = new byte[4096];
