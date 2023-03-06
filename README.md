@@ -53,27 +53,44 @@ You can use Weave-Loader as a dependency in your project by implementing it as a
 
 - **Groovy DSL**
 
+> `settings.gradle`
+
 ```gradle
-repositories {
-    maven {
-        url 'https://jitpack.io'
+pluginManagement {
+    repositories {
+        maven {
+            name = 'JitPack'
+            url = 'https://jitpack.io'
+        }
     }
 }
+```
 
-dependencies {
-    implementation 'com.github.Weave-MC:Weave-Loader:${VERSION}'
+> `build.gradle`
+
+```gradle
+plugins {
+    id "com.github.weave-mc.weave" version "3ad11a0fd5"
 }
 ```
 
 - **Kotlin DSL**
 
-```kt
-repositories {
-    maven("https://jitpack.io")
-}
+> `settins.gradle.kts`
 
-dependencies {
-    implementation("com.github.Weave-MC:Weave-Loader:${VERSION}")
+```kt
+pluginManagement {
+    repositories {
+        maven("https://jitpack.io")
+    }
+}
+```
+
+> `build.gradle.kts`
+
+```kt
+plugins {
+    id("com.github.weave-mc.weave") version ("3ad11a0fd5")
 }
 ```
 
