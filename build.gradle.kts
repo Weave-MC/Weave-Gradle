@@ -25,18 +25,20 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-
-    implementation("org.ow2.asm:asm:9.2")
-    implementation("org.ow2.asm:asm-tree:9.2")
-    implementation("org.ow2.asm:asm-commons:9.2")
-//  implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("commons-io:commons-io:2.11.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-
-    compileOnly("org.projectlombok:lombok:1.18.22")
-    annotationProcessor("org.projectlombok:lombok:1.18.22")
+    // Jupiter's JUNIT
+    testImplementation(libs.junitapi)
+    testRuntimeOnly(libs.junitengine)
+    // OW2 ASM
+    implementation(libs.asm)
+    implementation(libs.asmtree)
+    implementation(libs.asmcommons)
+    // Apache Commons
+    implementation(libs.commonsio)
+    // Google's GSON
+    implementation(libs.gson)
+    // Lombok
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 }
 
 gradlePlugin {
