@@ -6,6 +6,14 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaPlugin;
 
+/**
+ * Abstract plugin class extended to in {@link club.maxstats.weave.WeavePlugin} for 
+ * cleanliness.
+ *
+ * @author Scherso (<a href="https://github.com/Scherso">...</a>), Max (<a href="https://github.com/exejar">...</a>)
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class AbstractPlugin implements Plugin<Project> {
 
     protected Project project;
