@@ -1,6 +1,6 @@
 [versions]
 asm         = "9.2"      # https://asm.ow2.io/versions.html
-commonsio   = "2.11.0"   # https://commons.apache.org/proper/commons-io/  
+commonsio   = "2.11.0"   # https://commons.apache.org/proper/commons-io/
 gson        = "2.10.1"   # https://github.com/google/gson/releases
 lombok      = "1.18.22"  # https://projectlombok.org/download
 junit       = "5.8.1"    # https://github.com/junit-team/junit5/releases
@@ -13,4 +13,4 @@ commonsio   = { module = "commons-io:commons-io",                  version.ref =
 gson        = { module = "com.google.code.gson:gson",              version.ref = "gson"      }
 lombok      = { module = "org.projectlombok:lombok",               version.ref = "lombok"    }
 junitapi    = { module = "org.junit.jupiter:junit-jupiter-api",    version.ref = "junit"     }
-junitengine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit"     } 
+junitengine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit"     }

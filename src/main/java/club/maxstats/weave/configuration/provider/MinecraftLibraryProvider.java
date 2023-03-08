@@ -24,8 +24,7 @@ public class MinecraftLibraryProvider {
         for (JsonElement library : librariesArray) {
             String name = library.getAsJsonObject().get("name").getAsString();
 
-            if (name == null || name.contains("twitch-platform") || name.contains("twitch-external"))
-                continue;
+            if (name == null || name.contains("twitch-platform") || name.contains("twitch-external")) continue;
 
             project.getDependencies().add("compileOnly", name);
         }

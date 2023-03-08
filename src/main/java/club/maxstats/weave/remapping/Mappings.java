@@ -50,12 +50,12 @@ public class Mappings {
     }
 
     public static void createMappings(String joinedPath, String methodsPath, String fieldsPath) {
-        File joinedFile = new File(joinedPath);
+        File joinedFile  = new File(joinedPath);
         File methodsFile = new File(methodsPath);
-        File fieldsFile = new File(fieldsPath);
+        File fieldsFile  = new File(fieldsPath);
 
         Map<String, String> srgToMcpMethods = new HashMap<>();
-        Map<String, String> srgToMcpFields = new HashMap<>();
+        Map<String, String> srgToMcpFields  = new HashMap<>();
 
         parseCSV(methodsFile, srgToMcpMethods);
         parseCSV(fieldsFile, srgToMcpFields);
@@ -64,23 +64,23 @@ public class Mappings {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(joinedStream))) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    String type = line.substring(0, 2);
-                    String content = line.substring(4);
-                    String[] split = content.split(" ");
+                    String   type    = line.substring(0, 2);
+                    String   content = line.substring(4);
+                    String[] split   = content.split(" ");
 
                     switch (type) {
                         case "CL" -> classMap.put(split[0], split[1]);
                         case "FD" -> {
                             String fieldJoined = split[0];
-                            String srgName = split[1].substring(split[1].lastIndexOf('/') + 1);
-                            String mcpName = srgToMcpFields.get(srgName);
+                            String srgName     = split[1].substring(split[1].lastIndexOf('/') + 1);
+                            String mcpName     = srgToMcpFields.get(srgName);
 
                             fieldMap.put(fieldJoined, mcpName);
                         }
                         case "MD" -> {
                             String methodJoined = split[0] + split[1];
-                            String srgName = split[2].substring(split[2].lastIndexOf('/') + 1);
-                            String mcpName = srgToMcpMethods.get(srgName);
+                            String srgName      = split[2].substring(split[2].lastIndexOf('/') + 1);
+                            String mcpName      = srgToMcpMethods.get(srgName);
 
                             methodMap.put(methodJoined, mcpName);
                         }
@@ -98,10 +98,9 @@ public class Mappings {
         try (InputStream fieldsStream = new FileInputStream(csvFile)) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fieldsStream))) {
                 String line;
-                while((line = br.readLine()) != null) {
+                while ((line = br.readLine()) != null) {
                     /* Skip the first line. */
-                    if (line.contains("searge"))
-                        continue;
+                    if (line.contains("searge")) continue;
 
                     /* SRG, MCP */
                     String[] split = line.split(",");

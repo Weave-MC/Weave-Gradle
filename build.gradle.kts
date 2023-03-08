@@ -5,11 +5,11 @@ plugins {
     `maven-publish`
 }
 
-val projectName:    String by project
+val projectName: String by project
 val projectVersion: String by project
-val projectGroup:   String by project
+val projectGroup: String by project
 
-group   = projectGroup
+group = projectGroup
 version = projectVersion
 
 java {
@@ -47,7 +47,8 @@ gradlePlugin {
             // Using jitpack.io for the time being
             id = "com.github.weave-mc.weave"
             displayName = "Weave Plugin"
-            description = "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"
+            description =
+                "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"
             implementationClass = "${group}.WeavePlugin"
         }
     }

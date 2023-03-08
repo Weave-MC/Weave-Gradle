@@ -20,11 +20,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DownloadUtil {
-    
+
     /**
-     * Marks the end of a {@link BufferedReader} according to
-     * {@link java.io.BufferedReader#markPos)
-     * 
+     * Marks the end of a {@link BufferedReader} according to {@link java.io.BufferedReader#markedChar}.
+     *
      * @see java.io.BufferedReader
      */
     private static final int EOF = -1;
@@ -53,22 +52,21 @@ public class DownloadUtil {
     private static String checksum(String filePath) {
         try {
             File file = new File(filePath);
-            if (!file.exists())
-                return "";
+            if (!file.exists()) return "";
 
             MessageDigest digest = MessageDigest.getInstance("SHA1");
 
             try (InputStream is = new FileInputStream(file)) {
                 byte[] buffer = new byte[4096];
-                int bytesRead;
+                int    bytesRead;
 
                 while ((bytesRead = is.read(buffer)) != EOF) {
                     digest.update(buffer, 0, bytesRead);
                 }
             }
 
-            byte[] checksum = digest.digest();
-            StringBuilder hex = new StringBuilder();
+            byte[]        checksum = digest.digest();
+            StringBuilder hex      = new StringBuilder();
 
             for (byte b : checksum) {
                 hex.append(String.format("%02x", b));
@@ -77,7 +75,8 @@ public class DownloadUtil {
             return hex.toString();
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ignored) {}
+        } catch (NoSuchAlgorithmException ignored) {
+        }
 
         return "";
     }
@@ -137,17 +136,15 @@ public class DownloadUtil {
             while ((entry = zipIn.getNextEntry()) != null) {
                 try (ByteArrayOutputStream entryContentStream = new ByteArrayOutputStream()) {
                     byte[] buffer = new byte[4096];
-                    int len;
+                    int    len;
 
-                    while ((len = zipIn.read(buffer)) > 0)
-                        entryContentStream.write(buffer, 0, len);
+                    while ((len = zipIn.read(buffer)) > 0) entryContentStream.write(buffer, 0, len);
 
                     byte[] content = entryContentStream.toByteArray();
 
                     /* Prevents directory traversal attacks.
                      * CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') */
-                    if (entry.getName().contains(".."))
-                        continue;
+                    if (entry.getName().contains("..")) continue;
 
                     Path path = Paths.get(destinationPath + '/' + entry.getName());
                     Files.createDirectories(path.getParent());
@@ -171,10 +168,9 @@ public class DownloadUtil {
                 if (entry.getName().equals(entryName)) {
                     try (ByteArrayOutputStream entryContentStream = new ByteArrayOutputStream()) {
                         byte[] buffer = new byte[4096];
-                        int len;
+                        int    len;
 
-                        while ((len = zipIn.read(buffer)) > 0)
-                            entryContentStream.write(buffer, 0, len);
+                        while ((len = zipIn.read(buffer)) > 0) entryContentStream.write(buffer, 0, len);
 
                         byte[] content = entryContentStream.toByteArray();
 
@@ -250,6 +246,7 @@ public class DownloadUtil {
     }
 
     private static class DownloadTask implements Callable<String> {
+
         private String url;
         private String destinationPath;
         private String checksum = null;
@@ -268,16 +265,15 @@ public class DownloadUtil {
         @Override
         public String call() {
             try {
-                if (this.checksum == null)
-                    return download(this.url, this.destinationPath);
-                else
-                    return downloadAndChecksum(this.url, this.checksum, this.destinationPath);
+                if (this.checksum == null) return download(this.url, this.destinationPath);
+                else return downloadAndChecksum(this.url, this.checksum, this.destinationPath);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
             return null;
         }
+
     }
 
 }

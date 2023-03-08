@@ -7,8 +7,7 @@ import org.gradle.api.Task;
 import org.gradle.api.plugins.JavaPlugin;
 
 /**
- * Abstract plugin class extended to in {@link club.maxstats.weave.WeavePlugin} for 
- * cleanliness.
+ * Abstract plugin class extended to in {@link club.maxstats.weave.WeavePlugin} for cleanliness.
  *
  * @author Scherso (<a href="https://github.com/Scherso">...</a>), Max (<a href="https://github.com/exejar">...</a>)
  * @version 1.0.0
@@ -36,8 +35,8 @@ public class AbstractPlugin implements Plugin<Project> {
      * @param target The project to create the task in.
      * @param name   The name of the task.
      * @param type   The type of the task.
-     * @return       The created task.
      * @param <T>    Inherited from {@link Task}.
+     * @return The created task.
      */
     public <T extends Task> T makeTask(Project target, String name, Class<T> type) {
         return target.getTasks().create(name, type);
@@ -48,8 +47,8 @@ public class AbstractPlugin implements Plugin<Project> {
      *
      * @param name The name of the task.
      * @param type The type of the task instance.
-     * @return     The created task object for the {@link #project}.
      * @param <T>  Inherited from {@link Task}.
+     * @return The created task object for the {@link #project}.
      */
     public <T extends Task> T makeTask(String name, Class<T> type) {
         return makeTask(project, name, type);

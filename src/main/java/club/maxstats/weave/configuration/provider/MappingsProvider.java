@@ -18,12 +18,11 @@ import java.util.List;
 
 public class MappingsProvider {
 
-    private String version;
-    private Project project;
-
     private final String baseMappingUrl = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/{map_ver}-{mc_ver}/mcp_stable-{map_ver}-{mc_ver}.zip";
-    private final String newBaseSrgUrl = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/{mc_ver}/mcp_config-{mc_ver}.zip";
-    private final String oldBaseSrgUrl = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/{mc_ver}/mcp-{mc_ver}-srg.zip";
+    private final String newBaseSrgUrl  = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/{mc_ver}/mcp_config-{mc_ver}.zip";
+    private final String oldBaseSrgUrl  = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/{mc_ver}/mcp-{mc_ver}-srg.zip";
+    private String  version;
+    private Project project;
 
     public MappingsProvider(Project project, String version) {
         this.project = project;
@@ -32,10 +31,9 @@ public class MappingsProvider {
 
     public void provide() {
         boolean isNew = this.version.compareTo("1.13") >= 0;
-        if (this.version.contains("1.9") || this.version.contains("1.8") || this.version.contains("1.7"))
-            isNew = false;
+        if (this.version.contains("1.9") || this.version.contains("1.8") || this.version.contains("1.7")) isNew = false;
 
-        String mapVer = this.getMappingsVersion();
+        String mapVer     = this.getMappingsVersion();
         String baseMapUrl = this.baseMappingUrl.replace("{map_ver}", mapVer).replace("{mc_ver}", this.version);
 
         String baseSrgUrl = isNew ? this.newBaseSrgUrl : this.oldBaseSrgUrl;
@@ -44,8 +42,8 @@ public class MappingsProvider {
 
         String destinationPath = Constants.CACHE_DIR.getPath() + '/' + this.version + "/mappings";
 
-        List<String> mapPaths = DownloadUtil.downloadUnzipped(baseMapUrl, destinationPath);
-        String joinedMapPath = DownloadUtil.downloadEntryFromZip(baseSrgUrl, srgFileName, destinationPath);
+        List<String> mapPaths      = DownloadUtil.downloadUnzipped(baseMapUrl, destinationPath);
+        String       joinedMapPath = DownloadUtil.downloadEntryFromZip(baseSrgUrl, srgFileName, destinationPath);
 
         if (mapPaths == null || joinedMapPath == null) {
             System.err.println("Failed to download mappings for version " + this.version);
@@ -72,13 +70,13 @@ public class MappingsProvider {
     private String getMappingsVersion() {
         try (InputStream in = new URL("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/maven-metadata.xml").openStream()) {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = dbFactory.newDocumentBuilder();
-            Document document = builder.parse(in);
+            DocumentBuilder        builder   = dbFactory.newDocumentBuilder();
+            Document               document  = builder.parse(in);
 
-            XPathFactory xpFactory = XPathFactory.newInstance();
-            XPath xPath = xpFactory.newXPath();
-            String expression = String.format("//version[substring-after(., '-') = '%s']", this.version);
-            NodeList versions = (NodeList) xPath.evaluate(expression, document, XPathConstants.NODESET);
+            XPathFactory xpFactory  = XPathFactory.newInstance();
+            XPath        xPath      = xpFactory.newXPath();
+            String       expression = String.format("//version[substring-after(., '-') = '%s']", this.version);
+            NodeList     versions   = (NodeList) xPath.evaluate(expression, document, XPathConstants.NODESET);
 
             System.out.println(versions.getLength());
             if (versions.getLength() > 0) {
@@ -92,4 +90,5 @@ public class MappingsProvider {
         /* Default to 22 for 1.8.9 */
         return "22";
     }
+
 }

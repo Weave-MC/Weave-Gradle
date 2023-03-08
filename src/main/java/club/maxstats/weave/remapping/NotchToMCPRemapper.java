@@ -15,7 +15,7 @@ public class NotchToMCPRemapper extends Remapper {
      * Maps a class name from obfuscated to MCP.
      *
      * @param internalName The internal name of a class.
-     * @return             The mapped name of the class/field.
+     * @return The mapped name of the class/field.
      */
     @Override
     public String map(String internalName) {
@@ -29,7 +29,7 @@ public class NotchToMCPRemapper extends Remapper {
      * @param owner      The internal name of the owner class of the method.
      * @param name       The name of the method.
      * @param descriptor The descriptor of the method.
-     * @return           The mapped name of the method.
+     * @return The mapped name of the method.
      */
     @Override
     public String mapMethodName(String owner, String name, String descriptor) {
@@ -43,7 +43,7 @@ public class NotchToMCPRemapper extends Remapper {
      * @param owner      The internal name of the owner class of the field.
      * @param name       The name of the field.
      * @param descriptor The descriptor of the field.
-     * @return           The mapped name of the field.
+     * @return The mapped name of the field.
      */
     @Override
     public String mapFieldName(String owner, String name, String descriptor) {

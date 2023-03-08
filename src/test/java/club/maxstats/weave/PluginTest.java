@@ -10,7 +10,7 @@ public class PluginTest {
 
     /**
      * Plugin Test with {@link Project} and JUNIT-5.
-     * 
+     *
      * @see <a href="https://junit.org/junit5/docs/current/user-guide/">JUNIT-5 User Documentation</a>
      */
     @Test

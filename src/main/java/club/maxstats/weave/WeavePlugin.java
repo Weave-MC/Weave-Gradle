@@ -11,7 +11,7 @@ import java.util.Map;
  * TODO: Add description here.
  *
  * @author Scherso (<a href="https://github.com/Scherso">...</a>), Max (<a href="https://github.com/exejar">...</a>)
- *         Nils <3 (<a href="https://github.com/Nilsen84">...</a>)
+ * Nils <3 (<a href="https://github.com/Nilsen84">...</a>)
  * @version 1.0.0
  * @since 1.0.0
  */

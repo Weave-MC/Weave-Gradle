@@ -16,7 +16,7 @@ public class WeaveMinecraftExtension {
     public String getVersion() {
         return this.version;
     }
-    
+
     /**
      * @param version The version of Minecraft to use.
      */

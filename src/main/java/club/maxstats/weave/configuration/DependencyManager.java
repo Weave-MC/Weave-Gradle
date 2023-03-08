@@ -21,7 +21,7 @@ import java.util.jar.JarOutputStream;
 
 public class DependencyManager {
 
-    private final String version;
+    private final String  version;
     private final Project project;
 
     public DependencyManager(Project project) {
@@ -32,20 +32,17 @@ public class DependencyManager {
     }
 
     /**
-     * Pulls dependencies from {@link #addMinecraftAssets()} 
-     * and {@link #addMappedMinecraft()}.
+     * Pulls dependencies from {@link #addMinecraftAssets()} and {@link #addMappedMinecraft()}.
      */
     public void pullDeps() {
-        if (this.version.isEmpty())
-            return;
+        if (this.version.isEmpty()) return;
 
         this.addMinecraftAssets();
         this.addMappedMinecraft();
     }
 
     /**
-     * Adds Minecraft as a dependency by providing the jar to the
-     * projects file tree. 
+     * Adds Minecraft as a dependency by providing the jar to the projects file tree.
      */
     public void addMinecraftAssets() {
         new MinecraftProvider(this.project, this.version).provide();
@@ -61,7 +58,7 @@ public class DependencyManager {
         try {
             String versionPath = Constants.CACHE_DIR + "/" + this.version;
 
-            JarFile mcJar   = new JarFile(Utils.getMinecraftJar(this.version));
+            JarFile                         mcJar   = new JarFile(Utils.getMinecraftJar(this.version));
             Enumeration<? extends JarEntry> entries = mcJar.entries();
 
             File output = new File(versionPath, "minecraft-mapped.jar");
@@ -71,7 +68,7 @@ public class DependencyManager {
 
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
-                    
+
                     if (!entry.getName().endsWith(".class")) {
                         continue;
                     }
@@ -79,12 +76,12 @@ public class DependencyManager {
                     ClassReader cr = new ClassReader(mcJar.getInputStream(entry));
                     ClassWriter cw = new ClassWriter(0);
 
-                    Remapper remapper           = new NotchToMCPRemapper();
+                    Remapper      remapper      = new NotchToMCPRemapper();
                     ClassRemapper classRemapper = new ClassRemapper(cw, remapper);
                     cr.accept(classRemapper, 0);
 
                     String mappedName = remapper.map(cr.getClassName());
-                    byte[] bytes = cw.toByteArray();
+                    byte[] bytes      = cw.toByteArray();
 
                     JarEntry newEntry = new JarEntry(mappedName + ".class");
                     newEntry.setSize(bytes.length);
