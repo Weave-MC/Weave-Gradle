@@ -6,28 +6,13 @@ import com.google.gson.JsonParser;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+
 
 public class DownloadUtil {
-
-    /**
-     * Marks the end of a {@link BufferedReader} according to {@link java.io.BufferedReader#markedChar}.
-     *
-     * @see java.io.BufferedReader
-     */
-    private static final int EOF = -1;
-
     /**
      * Grabs a {@link JsonObject} from the inputted argument.
      *
@@ -35,8 +20,8 @@ public class DownloadUtil {
      * @return our {@link JsonObject} parsed through {@link InputStreamReader}.
      */
     public static JsonObject getJsonFromURL(String url) {
-        try {
-            return JsonParser.parseReader(new InputStreamReader(new URL(url).openConnection().getInputStream())).getAsJsonObject();
+        try (var stream = new URL(url).openStream()) {
+            return JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
@@ -52,21 +37,23 @@ public class DownloadUtil {
     private static String checksum(String filePath) {
         try {
             File file = new File(filePath);
-            if (!file.exists()) return "";
+            if (!file.exists())
+                return "";
 
             MessageDigest digest = MessageDigest.getInstance("SHA1");
 
             try (InputStream is = new FileInputStream(file)) {
                 byte[] buffer = new byte[4096];
-                int    bytesRead;
+                int bytesRead = is.read(buffer);
 
-                while ((bytesRead = is.read(buffer)) != EOF) {
+                while (bytesRead >= 0) {
                     digest.update(buffer, 0, bytesRead);
+                    bytesRead = is.read(buffer);
                 }
             }
 
-            byte[]        checksum = digest.digest();
-            StringBuilder hex      = new StringBuilder();
+            byte[] checksum = digest.digest();
+            StringBuilder hex = new StringBuilder();
 
             for (byte b : checksum) {
                 hex.append(String.format("%02x", b));
@@ -75,8 +62,7 @@ public class DownloadUtil {
             return hex.toString();
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ignored) {
-        }
+        } catch (NoSuchAlgorithmException ignored) {}
 
         return "";
     }
@@ -127,153 +113,4 @@ public class DownloadUtil {
         }
         return null;
     }
-
-    public static List<String> downloadUnzipped(String url, String destinationPath) {
-        try (ZipInputStream zipIn = new ZipInputStream(new URL(url).openStream())) {
-            List<String> paths = new ArrayList<>();
-
-            ZipEntry entry = null;
-            while ((entry = zipIn.getNextEntry()) != null) {
-                try (ByteArrayOutputStream entryContentStream = new ByteArrayOutputStream()) {
-                    byte[] buffer = new byte[4096];
-                    int    len;
-
-                    while ((len = zipIn.read(buffer)) > 0) entryContentStream.write(buffer, 0, len);
-
-                    byte[] content = entryContentStream.toByteArray();
-
-                    /* Prevents directory traversal attacks.
-                     * CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') */
-                    if (entry.getName().contains("..")) continue;
-
-                    Path path = Paths.get(destinationPath + '/' + entry.getName());
-                    Files.createDirectories(path.getParent());
-                    Files.write(path, content);
-                    paths.add(path.toString());
-                }
-            }
-
-            return paths;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static String downloadEntryFromZip(String url, String entryName, String destinationPath) {
-        try (ZipInputStream zipIn = new ZipInputStream(new URL(url).openStream())) {
-            ZipEntry entry;
-            while ((entry = zipIn.getNextEntry()) != null) {
-                if (entry.getName().equals(entryName)) {
-                    try (ByteArrayOutputStream entryContentStream = new ByteArrayOutputStream()) {
-                        byte[] buffer = new byte[4096];
-                        int    len;
-
-                        while ((len = zipIn.read(buffer)) > 0) entryContentStream.write(buffer, 0, len);
-
-                        byte[] content = entryContentStream.toByteArray();
-
-                        Path filePath = Paths.get(destinationPath + '/' + entryName);
-                        Files.createDirectories(filePath.getParent());
-                        Files.write(filePath, content);
-                        return filePath.toString();
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
-     * Downloads and replaces in async.
-     *
-     * @param urls            The URLs to download from.
-     * @param destinationPath The path/directory to download to.
-     */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static String[] downloadMultipleAsync(String[] urls, String destinationPath) {
-        try {
-            ExecutorService pool = Executors.newFixedThreadPool(urls.length);
-
-            List<Future<String>> filePaths = new ArrayList<>();
-            for (String url : urls) {
-                filePaths.add(pool.submit(new DownloadTask(url, destinationPath)));
-            }
-
-            pool.shutdown();
-            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-
-            return getPaths(filePaths);
-        } catch (InterruptedException ignored) {
-        }
-
-        return new String[0];
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static String[] downloadAndChecksumMultipleAsync(Map<String, String> urlChecksumMap, String destinationPath) {
-        try {
-            ExecutorService pool = Executors.newFixedThreadPool(urlChecksumMap.size());
-
-            List<Future<String>> filePaths = new ArrayList<>();
-            for (Map.Entry<String, String> entry : urlChecksumMap.entrySet()) {
-                filePaths.add(pool.submit(new DownloadTask(entry.getKey(), entry.getValue(), destinationPath)));
-            }
-
-            pool.shutdown();
-            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-
-            return getPaths(filePaths);
-        } catch (InterruptedException ignored) {
-        }
-
-        return new String[0];
-    }
-
-    private static String[] getPaths(List<Future<String>> filePaths) throws InterruptedException {
-        return filePaths.stream().map(future -> {
-            try {
-                return future.get();
-            } catch (InterruptedException | ExecutionException ex) {
-                ex.printStackTrace();
-                return null;
-            }
-        }).filter(Objects::nonNull).toArray(String[]::new);
-    }
-
-    private static class DownloadTask implements Callable<String> {
-
-        private String url;
-        private String destinationPath;
-        private String checksum = null;
-
-        public DownloadTask(String url, String destinationPath) {
-            this.url = url;
-            this.destinationPath = destinationPath;
-        }
-
-        public DownloadTask(String url, String checksum, String destinationPath) {
-            this.url = url;
-            this.destinationPath = destinationPath;
-            this.checksum = checksum;
-        }
-
-        @Override
-        public String call() {
-            try {
-                if (this.checksum == null) return download(this.url, this.destinationPath);
-                else return downloadAndChecksum(this.url, this.checksum, this.destinationPath);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            return null;
-        }
-
-    }
-
 }

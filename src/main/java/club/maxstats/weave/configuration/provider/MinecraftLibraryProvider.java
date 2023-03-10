@@ -2,15 +2,13 @@ package club.maxstats.weave.configuration.provider;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import lombok.AllArgsConstructor;
 import org.gradle.api.Project;
 
+@AllArgsConstructor
 public class MinecraftLibraryProvider {
 
     private final MinecraftProvider minecraftProvider;
-
-    public MinecraftLibraryProvider(MinecraftProvider minecraftProvider) {
-        this.minecraftProvider = minecraftProvider;
-    }
 
     public void provide() {
         JsonArray librariesArray = this.minecraftProvider.getVersionJson().get("libraries").getAsJsonArray();

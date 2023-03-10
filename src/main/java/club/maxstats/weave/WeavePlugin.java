@@ -1,11 +1,11 @@
 package club.maxstats.weave;
 
+import club.maxstats.weave.configuration.DependencyManager;
 import club.maxstats.weave.configuration.WeaveMinecraftExtension;
 import lombok.NonNull;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-
-import java.util.Map;
+import org.gradle.api.plugins.JavaPlugin;
 
 /**
  * TODO: Add description here.
@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class WeavePlugin extends AbstractPlugin {
+public class WeavePlugin implements Plugin<Project> {
 
     /**
      * {@link Plugin#apply(Object)}
@@ -25,13 +25,12 @@ public class WeavePlugin extends AbstractPlugin {
     @Override
     public void apply(@NonNull Project project) {
         /* Applying our default plugins. */
-        project.apply(Map.of("plugin", "idea"));
-        project.apply(Map.of("plugin", "eclipse"));
-        project.apply(Map.of("plugin", "java"));
+        project.getPluginManager().apply(JavaPlugin.class);
+        var ext = project.getExtensions().create("minecraft", WeaveMinecraftExtension.class);
 
-        project.getExtensions().create("minecraft", WeaveMinecraftExtension.class);
-
-        super.apply(project);
+        project.afterEvaluate(p -> {
+            new DependencyManager(p, ext.getVersion().get()).pullDeps();
+        });
     }
 
 }

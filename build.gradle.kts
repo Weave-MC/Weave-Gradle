@@ -1,6 +1,4 @@
 plugins {
-    idea
-    java
     `java-gradle-plugin`
     `maven-publish`
 }
@@ -16,8 +14,6 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
@@ -30,10 +26,7 @@ dependencies {
     testRuntimeOnly(libs.junitengine)
     // OW2 ASM
     implementation(libs.asm)
-    implementation(libs.asmtree)
     implementation(libs.asmcommons)
-    // Apache Commons
-    implementation(libs.commonsio)
     // Google's GSON
     implementation(libs.gson)
     // Lombok
@@ -47,8 +40,7 @@ gradlePlugin {
             // Using jitpack.io for the time being
             id = "com.github.weave-mc.weave"
             displayName = "Weave Plugin"
-            description =
-                "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"
+            description = "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"
             implementationClass = "${group}.WeavePlugin"
         }
     }
