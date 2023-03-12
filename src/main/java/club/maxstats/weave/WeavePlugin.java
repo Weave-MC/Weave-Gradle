@@ -26,6 +26,8 @@ public class WeavePlugin implements Plugin<Project> {
     public void apply(@NonNull Project project) {
         /* Applying our default plugins. */
         project.getPluginManager().apply(JavaPlugin.class);
+        project.getRepositories().mavenCentral();
+        project.getRepositories().mavenLocal();
         var ext = project.getExtensions().create("minecraft", WeaveMinecraftExtension.class);
 
         project.afterEvaluate(p -> {
