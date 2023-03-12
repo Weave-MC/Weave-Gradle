@@ -29,17 +29,8 @@ public class DependencyManager {
      * Pulls dependencies from {@link #addMinecraftAssets()} and {@link #addMappedMinecraft()}.
      */
     public void pullDeps() {
-        this.addWeaveLoader();
         this.addMinecraftAssets();
         this.addMappedMinecraft();
-    }
-
-    private void addWeaveLoader() {
-        this.project.getRepositories().maven(mavenArtifactRepository -> {
-            mavenArtifactRepository.setName("jitpack");
-            mavenArtifactRepository.setUrl("https://jitpack.io");
-        });
-        this.project.getDependencies().add("compileOnly", "com.github.weave-mc:weave-loader:0.1.0-alpha");
     }
 
     /**
