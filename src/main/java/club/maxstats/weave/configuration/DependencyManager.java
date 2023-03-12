@@ -30,19 +30,28 @@ public class DependencyManager {
      * and {@link #addMappedMinecraft()}.
      */
     public void pullDeps() {
+        this.addWeaveLoader();
         this.addMinecraftAssets();
         this.addMappedMinecraft();
+    }
+
+    private void addWeaveLoader() {
+        this.project.getRepositories().maven(mavenArtifactRepository -> {
+            mavenArtifactRepository.setName("jitpack");
+            mavenArtifactRepository.setUrl("https://jitpack.io");
+        });
+        this.project.getDependencies().add("compileOnly", "com.github.weave-mc:weave-loader:0.1.0-alpha");
     }
 
     /**
      * Adds Minecraft as a dependency by providing the jar to the
      * projects file tree.
      */
-    public void addMinecraftAssets() {
+    private void addMinecraftAssets() {
         new MinecraftProvider(this.project, this.version).provide();
     }
 
-    public void addMappedMinecraft() {
+    private void addMappedMinecraft() {
         try {
             String versionPath = Constants.CACHE_DIR + "/" + this.version;
 
