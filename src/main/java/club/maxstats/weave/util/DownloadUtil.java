@@ -2,7 +2,6 @@ package club.maxstats.weave.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import lombok.var;
 
 import java.io.*;
 import java.net.URL;
@@ -21,7 +20,7 @@ public class DownloadUtil {
      * @return our {@link JsonObject} parsed through {@link InputStreamReader}.
      */
     public static JsonObject getJsonFromURL(String url) {
-        try (var stream = new URL(url).openStream()) {
+        try (InputStream stream = new URL(url).openStream()) {
             return JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -105,7 +104,7 @@ public class DownloadUtil {
             if (!checksum(filePath).equals(checksum)) {
                 try (InputStream in = new URL(url).openStream()) {
                     Files.createDirectories(Paths.get(destinationPath));
-                    Files.copy(in, Paths.get(destinationPath + '/' + fileName), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(in, Paths.get(destinationPath, fileName), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
             return filePath;

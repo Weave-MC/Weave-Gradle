@@ -1,6 +1,6 @@
 package club.maxstats.weave.configuration.provider;
 
-import club.maxstats.weave.util.Constants;
+import club.maxstats.weave.configuration.MinecraftVersion;
 import club.maxstats.weave.util.DownloadUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -12,10 +12,9 @@ import org.gradle.api.Project;
 @RequiredArgsConstructor
 public class MinecraftProvider {
 
-    private final Project    project;
-    private final String     version;
-    private       String     downloadPath;
-    private       JsonObject versionJson;
+    private final Project          project;
+    private final MinecraftVersion version;
+    private       JsonObject       versionJson;
 
     public void provide() {
         JsonObject manifestJson = DownloadUtil.getJsonFromURL("https://launchermeta.mojang.com/mc/game/version_manifest_v2.json");
@@ -25,7 +24,7 @@ public class MinecraftProvider {
 
             for (int i = 0; i < versionArray.size(); i++) {
                 JsonObject version = versionArray.get(i).getAsJsonObject();
-                if (version.get("id").getAsString().equals(this.version)) {
+                if (version.get("id").getAsString().equals(this.version.getId())) {
                     versionObject = version;
                     break;
                 }
@@ -35,7 +34,6 @@ public class MinecraftProvider {
                 JsonObject versionJson = DownloadUtil.getJsonFromURL(versionObject.get("url").getAsString());
                 if (versionJson != null) {
                     this.versionJson = versionJson;
-                    this.downloadPath = Constants.CACHE_DIR + "/" + this.version;
 
                     JsonObject downloadsObject = versionJson.getAsJsonObject("downloads");
                     JsonObject clientObject    = downloadsObject.getAsJsonObject("client");
@@ -43,7 +41,7 @@ public class MinecraftProvider {
                     String clientURL = clientObject.get("url").getAsString();
                     String checksum  = clientObject.get("sha1").getAsString();
 
-                    DownloadUtil.downloadAndChecksum(clientURL, checksum, this.downloadPath);
+                    DownloadUtil.downloadAndChecksum(clientURL, checksum, this.version.getCacheDirectory().getPath());
 
                     new MinecraftLibraryProvider(this).provide();
                 }

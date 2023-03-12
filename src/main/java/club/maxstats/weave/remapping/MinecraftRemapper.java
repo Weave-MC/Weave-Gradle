@@ -1,36 +1,33 @@
 package club.maxstats.weave.remapping;
 
-import club.maxstats.weave.WeavePlugin;
-import lombok.Cleanup;
-import lombok.SneakyThrows;
+import club.maxstats.weave.configuration.MinecraftVersion;
+import lombok.experimental.UtilityClass;
+import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.SimpleRemapper;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MinecraftRemapper extends SimpleRemapper {
+@UtilityClass
+public class MinecraftRemapper {
 
-    public MinecraftRemapper(String version) {
-        super(parseMappings(version));
+    public Remapper create(MinecraftVersion version) throws IOException {
+        try (InputStream mappings = version.getMappingStream()) {
+            return new SimpleRemapper(parseMappings(mappings));
+        }
     }
 
     /**
-     * Parses the mappings from the specified version.
+     * Parses the mappings from the specified stream.
      *
-     * @param version The version to fetch.
+     * @param mappingsStream The stream from which to read the mappings
      * @return The mappings according to their corresponding version.
      */
-    @SneakyThrows(IOException.class)
-    private static Map<String, String> parseMappings(String version) {
+    private Map<String, String> parseMappings(InputStream mappingsStream) throws IOException {
         Map<String, String> mappings = new HashMap<>();
 
-        InputStream stream = WeavePlugin.class.getResourceAsStream("/mappings/lunar_named_b2_" + version + ".xsrg");
-        if (stream == null) {
-            throw new RuntimeException("No mappings available for version " + version);
-        }
-
-        @Cleanup BufferedReader rdr = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader rdr = new BufferedReader(new InputStreamReader(mappingsStream));
         while (rdr.ready()) {
             String line = rdr.readLine();
             if (line.isEmpty()) continue;
@@ -58,6 +55,7 @@ public class MinecraftRemapper extends SimpleRemapper {
                 }
             }
         }
+
         return mappings;
     }
 

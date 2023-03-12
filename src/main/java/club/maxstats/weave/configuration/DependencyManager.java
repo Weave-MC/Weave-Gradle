@@ -2,8 +2,6 @@ package club.maxstats.weave.configuration;
 
 import club.maxstats.weave.configuration.provider.MinecraftProvider;
 import club.maxstats.weave.remapping.MinecraftRemapper;
-import club.maxstats.weave.util.Constants;
-import club.maxstats.weave.util.Utils;
 import lombok.AllArgsConstructor;
 import org.gradle.api.Project;
 import org.objectweb.asm.ClassReader;
@@ -23,8 +21,8 @@ import java.util.jar.JarOutputStream;
 @AllArgsConstructor
 public class DependencyManager {
 
-    private final Project project;
-    private final String  version;
+    private final Project          project;
+    private final MinecraftVersion version;
 
     /**
      * Pulls dependencies from {@link #addMinecraftAssets()} and {@link #addMappedMinecraft()}.
@@ -43,15 +41,13 @@ public class DependencyManager {
 
     private void addMappedMinecraft() {
         try {
-            String versionPath = Constants.CACHE_DIR + "/" + this.version;
-
-            JarFile                         mcJar   = new JarFile(Utils.getMinecraftJar(this.version));
+            JarFile                         mcJar   = new JarFile(version.getMinecraftJarCache());
             Enumeration<? extends JarEntry> entries = mcJar.entries();
 
-            File output = new File(versionPath, "minecraft-mapped.jar");
+            File output = new File(version.getCacheDirectory(), "minecraft-mapped.jar");
             if (!output.exists() /* TODO create checksums for each mapped jar and compare to the jar file */) {
                 JarOutputStream jos      = new JarOutputStream(Files.newOutputStream(output.toPath()));
-                Remapper        remapper = new MinecraftRemapper(this.version);
+                Remapper        remapper = MinecraftRemapper.create(version);
 
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
@@ -65,7 +61,8 @@ public class DependencyManager {
                     ClassWriter cw = new ClassWriter(0);
                     cr.accept(new ClassRemapper(cw, remapper), 0);
 
-                    String mappedName = Optional.ofNullable(remapper.map(cr.getClassName())).orElse(cr.getClassName());
+                    String mappedName = remapper.map(cr.getClassName());
+                    if (mappedName == null) mappedName = cr.getClassName();
 
                     byte[] bytes = cw.toByteArray();
 

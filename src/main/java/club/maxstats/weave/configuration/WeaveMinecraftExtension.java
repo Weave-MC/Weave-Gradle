@@ -4,6 +4,10 @@ import org.gradle.api.provider.Property;
 
 public interface WeaveMinecraftExtension {
 
-    Property<String> getVersion();
+    Property<MinecraftVersion> getVersion();
+
+    default void version(String version) {
+        getVersion().set(MinecraftVersion.fromString(version));
+    }
 
 }
