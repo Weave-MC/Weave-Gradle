@@ -2,6 +2,7 @@ package club.maxstats.weave.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.var;
 
 import java.io.*;
 import java.net.URL;
@@ -41,7 +42,7 @@ public class DownloadUtil {
 
             MessageDigest digest = MessageDigest.getInstance("SHA1");
 
-            try (InputStream is = new FileInputStream(file)) {
+            try (InputStream is = Files.newInputStream(file.toPath())) {
                 byte[] buffer    = new byte[4096];
                 int    bytesRead = is.read(buffer);
 

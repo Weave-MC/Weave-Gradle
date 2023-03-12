@@ -9,10 +9,11 @@ import org.gradle.api.Project;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.jar.JarEntry;
@@ -49,8 +50,8 @@ public class DependencyManager {
 
             File output = new File(versionPath, "minecraft-mapped.jar");
             if (!output.exists() /* TODO create checksums for each mapped jar and compare to the jar file */) {
-                JarOutputStream jos      = new JarOutputStream(new FileOutputStream(output));
-                var             remapper = new MinecraftRemapper(this.version);
+                JarOutputStream jos      = new JarOutputStream(Files.newOutputStream(output.toPath()));
+                Remapper        remapper = new MinecraftRemapper(this.version);
 
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();

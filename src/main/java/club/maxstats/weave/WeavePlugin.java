@@ -28,10 +28,11 @@ public class WeavePlugin implements Plugin<Project> {
         project.getPluginManager().apply(JavaPlugin.class);
         project.getRepositories().mavenCentral();
         project.getRepositories().mavenLocal();
-        var ext = project.getExtensions().create("minecraft", WeaveMinecraftExtension.class);
 
-        project.afterEvaluate(property -> {
-            new DependencyManager(property, ext.getVersion().get()).pullDeps();
+        WeaveMinecraftExtension ext = project.getExtensions().create("minecraft", WeaveMinecraftExtension.class);
+
+        project.afterEvaluate(proj -> {
+            new DependencyManager(proj, ext.getVersion().get()).pullDeps();
         });
     }
 

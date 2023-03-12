@@ -11,9 +11,7 @@ group = projectGroup
 version = projectVersion
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
+    sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
 repositories {

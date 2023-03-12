@@ -5,9 +5,7 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.objectweb.asm.commons.SimpleRemapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,34 +23,38 @@ public class MinecraftRemapper extends SimpleRemapper {
      */
     @SneakyThrows(IOException.class)
     private static Map<String, String> parseMappings(String version) {
-        var mappings = new HashMap<String, String>();
+        Map<String, String> mappings = new HashMap<>();
 
-        var stream = WeavePlugin.class.getResourceAsStream("/mappings/lunar_named_b2_" + version + ".xsrg");
+        InputStream stream = WeavePlugin.class.getResourceAsStream("/mappings/lunar_named_b2_" + version + ".xsrg");
         if (stream == null) {
             throw new RuntimeException("No mappings available for version " + version);
         }
 
-        @Cleanup var rdr = new BufferedReader(new InputStreamReader(stream));
+        @Cleanup BufferedReader rdr = new BufferedReader(new InputStreamReader(stream));
         while (rdr.ready()) {
-            var line = rdr.readLine();
-            if (line.isBlank()) continue;
+            String line = rdr.readLine();
+            if (line.isEmpty()) continue;
 
-            var split = line.substring(4).split(" ");
+            String[] split = line.substring(4).split(" ");
             switch (line.substring(0, 4)) {
-                case "CL: " -> mappings.put(split[0], split[1]);
-                case "MD: " -> {
-                    var i      = split[0].lastIndexOf('/');
-                    var clazz  = split[0].substring(0, i);
-                    var method = split[0].substring(i + 1);
+                case "CL: ":
+                    mappings.put(split[0], split[1]);
+                    break;
+                case "MD: ": {
+                    int    i      = split[0].lastIndexOf('/');
+                    String clazz  = split[0].substring(0, i);
+                    String method = split[0].substring(i + 1);
 
                     mappings.put(String.format("%s.%s%s", clazz, method, split[1]), split[2].substring(split[2].lastIndexOf('/') + 1));
+                    break;
                 }
-                case "FD: " -> {
-                    var i     = split[0].lastIndexOf('/');
-                    var clazz = split[0].substring(0, i);
-                    var field = split[0].substring(i + 1);
+                case "FD: ": {
+                    int    i     = split[0].lastIndexOf('/');
+                    String clazz = split[0].substring(0, i);
+                    String field = split[0].substring(i + 1);
 
                     mappings.put(String.format("%s.%s", clazz, field), split[2].substring(split[2].lastIndexOf('/') + 1));
+                    break;
                 }
             }
         }
