@@ -23,11 +23,10 @@ import java.util.jar.JarOutputStream;
 public class DependencyManager {
 
     private final Project project;
-    private final String version;
+    private final String  version;
 
     /**
-     * Pulls dependencies from {@link #addMinecraftAssets()}
-     * and {@link #addMappedMinecraft()}.
+     * Pulls dependencies from {@link #addMinecraftAssets()} and {@link #addMappedMinecraft()}.
      */
     public void pullDeps() {
         this.addWeaveLoader();
@@ -44,8 +43,7 @@ public class DependencyManager {
     }
 
     /**
-     * Adds Minecraft as a dependency by providing the jar to the
-     * projects file tree.
+     * Adds Minecraft as a dependency by providing the jar to the projects file tree.
      */
     private void addMinecraftAssets() {
         new MinecraftProvider(this.project, this.version).provide();
@@ -55,13 +53,13 @@ public class DependencyManager {
         try {
             String versionPath = Constants.CACHE_DIR + "/" + this.version;
 
-            JarFile mcJar = new JarFile(Utils.getMinecraftJar(this.version));
+            JarFile                         mcJar   = new JarFile(Utils.getMinecraftJar(this.version));
             Enumeration<? extends JarEntry> entries = mcJar.entries();
 
             File output = new File(versionPath, "minecraft-mapped.jar");
             if (!output.exists() /* TODO create checksums for each mapped jar and compare to the jar file */) {
-                JarOutputStream jos = new JarOutputStream(new FileOutputStream(output));
-                var remapper = new MinecraftRemapper(this.version);
+                JarOutputStream jos      = new JarOutputStream(new FileOutputStream(output));
+                var             remapper = new MinecraftRemapper(this.version);
 
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
@@ -75,9 +73,7 @@ public class DependencyManager {
                     ClassWriter cw = new ClassWriter(0);
                     cr.accept(new ClassRemapper(cw, remapper), 0);
 
-                    String mappedName = Optional.ofNullable(
-                        remapper.map(cr.getClassName())
-                    ).orElse(cr.getClassName());
+                    String mappedName = Optional.ofNullable(remapper.map(cr.getClassName())).orElse(cr.getClassName());
 
                     byte[] bytes = cw.toByteArray();
 

@@ -11,15 +11,16 @@ import org.gradle.api.Project;
 @Getter
 @RequiredArgsConstructor
 public class MinecraftProvider {
-    private final Project project;
-    private final String version;
-    private String downloadPath;
-    private JsonObject versionJson;
+
+    private final Project    project;
+    private final String     version;
+    private       String     downloadPath;
+    private       JsonObject versionJson;
 
     public void provide() {
         JsonObject manifestJson = DownloadUtil.getJsonFromURL("https://launchermeta.mojang.com/mc/game/version_manifest_v2.json");
         if (manifestJson != null) {
-            JsonArray versionArray = manifestJson.getAsJsonArray("versions");
+            JsonArray  versionArray  = manifestJson.getAsJsonArray("versions");
             JsonObject versionObject = null;
 
             for (int i = 0; i < versionArray.size(); i++) {
@@ -37,10 +38,10 @@ public class MinecraftProvider {
                     this.downloadPath = Constants.CACHE_DIR + "/" + this.version;
 
                     JsonObject downloadsObject = versionJson.getAsJsonObject("downloads");
-                    JsonObject clientObject = downloadsObject.getAsJsonObject("client");
+                    JsonObject clientObject    = downloadsObject.getAsJsonObject("client");
 
                     String clientURL = clientObject.get("url").getAsString();
-                    String checksum = clientObject.get("sha1").getAsString();
+                    String checksum  = clientObject.get("sha1").getAsString();
 
                     DownloadUtil.downloadAndChecksum(clientURL, checksum, this.downloadPath);
 
@@ -49,4 +50,5 @@ public class MinecraftProvider {
             }
         }
     }
+
 }

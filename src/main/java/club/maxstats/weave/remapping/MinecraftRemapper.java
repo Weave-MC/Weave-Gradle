@@ -12,10 +12,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MinecraftRemapper extends SimpleRemapper {
+
     public MinecraftRemapper(String version) {
         super(parseMappings(version));
     }
 
+    /**
+     * Parses the mappings from the specified version.
+     *
+     * @param version The version to fetch.
+     * @return The mappings according to their corresponding version.
+     */
     @SneakyThrows(IOException.class)
     private static Map<String, String> parseMappings(String version) {
         var mappings = new HashMap<String, String>();
@@ -25,9 +32,9 @@ public class MinecraftRemapper extends SimpleRemapper {
             throw new RuntimeException("No mappings available for version " + version);
         }
 
-        @Cleanup var reader = new BufferedReader(new InputStreamReader(stream));
-        while (reader.ready()) {
-            var line = reader.readLine();
+        @Cleanup var rdr = new BufferedReader(new InputStreamReader(stream));
+        while (rdr.ready()) {
+            var line = rdr.readLine();
             if (line.isBlank()) continue;
 
             var split = line.substring(4).split(" ");
@@ -51,4 +58,5 @@ public class MinecraftRemapper extends SimpleRemapper {
         }
         return mappings;
     }
+
 }

@@ -11,8 +11,8 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 public class DownloadUtil {
+
     /**
      * Grabs a {@link JsonObject} from the inputted argument.
      *
@@ -37,14 +37,13 @@ public class DownloadUtil {
     private static String checksum(String filePath) {
         try {
             File file = new File(filePath);
-            if (!file.exists())
-                return "";
+            if (!file.exists()) return "";
 
             MessageDigest digest = MessageDigest.getInstance("SHA1");
 
             try (InputStream is = new FileInputStream(file)) {
-                byte[] buffer = new byte[4096];
-                int bytesRead = is.read(buffer);
+                byte[] buffer    = new byte[4096];
+                int    bytesRead = is.read(buffer);
 
                 while (bytesRead >= 0) {
                     digest.update(buffer, 0, bytesRead);
@@ -52,8 +51,8 @@ public class DownloadUtil {
                 }
             }
 
-            byte[] checksum = digest.digest();
-            StringBuilder hex = new StringBuilder();
+            byte[]        checksum = digest.digest();
+            StringBuilder hex      = new StringBuilder();
 
             for (byte b : checksum) {
                 hex.append(String.format("%02x", b));
@@ -62,7 +61,8 @@ public class DownloadUtil {
             return hex.toString();
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ignored) {}
+        } catch (NoSuchAlgorithmException ignored) {
+        }
 
         return "";
     }
@@ -78,9 +78,9 @@ public class DownloadUtil {
             String fileName = url.substring(url.lastIndexOf('/') + 1);
             String filePath = destinationPath + '/' + fileName;
 
-            try (InputStream in = new URL(url).openStream()) {
+            try (InputStream is = new URL(url).openStream()) {
                 Files.createDirectories(Paths.get(destinationPath));
-                Files.copy(in, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(is, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
                 return filePath;
             }
         } catch (IOException ex) {
@@ -113,4 +113,5 @@ public class DownloadUtil {
         }
         return null;
     }
+
 }
