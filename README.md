@@ -72,7 +72,7 @@ pluginManagement {
 
 ```gradle
 plugins {
-    id "com.github.weave-mc.weave" version "3ad11a0fd5"
+    id "com.github.weave-mc.weave" version "ec59a8bceb"
 }
 ```
 
@@ -92,7 +92,7 @@ pluginManagement {
 
 ```kt
 plugins {
-    id("com.github.weave-mc.weave") version ("3ad11a0fd5")
+    id("com.github.weave-mc.weave") version ("ec59a8bceb")
 }
 ```
 
