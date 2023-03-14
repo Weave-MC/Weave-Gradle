@@ -12,13 +12,16 @@ import java.io.InputStream;
 public enum MinecraftVersion {
 
     V1_7_10 ("1.7.10", "lunar_named_b2_1.7.10.xsrg"),
-    V1_8_9  ("1.8.9", "lunar_named_b2_1.8.9.xsrg"),
+    V1_8_9  ("1.8.9",  "lunar_named_b2_1.8.9.xsrg"),
     V1_12_2 ("1.12.2", "lunar_named_b2_1.12.2.xsrg");
 
     @Getter
     private final String id;
     private final String mappings;
 
+    /**
+     * @return {@link #mappings} as a stream.
+     */
     public InputStream getMappingStream() {
         return WeavePlugin.class.getResourceAsStream("/mappings/" + mappings);
     }

@@ -11,8 +11,11 @@ import org.objectweb.asm.commons.Remapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -45,30 +48,38 @@ public class DependencyManager {
 
             File output = new File(version.getCacheDirectory(), "minecraft-mapped.jar");
             if (!output.exists() /* TODO create checksums for each mapped jar and compare to the jar file */) {
-                JarOutputStream jos      = new JarOutputStream(Files.newOutputStream(output.toPath()));
-                Remapper        remapper = MinecraftRemapper.create(version);
+                Map<JarEntry, InputStream> classEntries = new HashMap<>();
 
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
 
-                    if (!entry.getName().endsWith(".class"))
-                        continue;
+                    if (!entry.getName().endsWith(".class")) continue;
 
-                    ClassReader cr = new ClassReader(mcJar.getInputStream(entry));
-
-                    ClassWriter cw = new ClassWriter(0);
-                    cr.accept(new ClassRemapper(cw, remapper), 0);
-
-                    String mappedName = remapper.map(cr.getClassName());
-                    if (mappedName == null) mappedName = cr.getClassName();
-
-                    byte[] bytes = cw.toByteArray();
-
-                    JarEntry newEntry = new JarEntry(mappedName + ".class");
-                    jos.putNextEntry(newEntry);
-                    jos.write(bytes);
-                    jos.closeEntry();
+                    classEntries.put(entry, mcJar.getInputStream(entry));
                 }
+
+                JarOutputStream jos      = new JarOutputStream(Files.newOutputStream(output.toPath()));
+                Remapper        remapper = MinecraftRemapper.create(version);
+
+                classEntries.entrySet().parallelStream().forEach(entry -> {
+                    try {
+                        ClassReader cr = new ClassReader(entry.getValue());
+                        ClassWriter cw = new ClassWriter(0);
+                        cr.accept(new ClassRemapper(cw, remapper), 0);
+
+                        String mappedName = remapper.map(cr.getClassName());
+                        if (mappedName == null) mappedName = cr.getClassName();
+
+                        byte[] bytes = cw.toByteArray();
+
+                        JarEntry newEntry = new JarEntry(mappedName + ".class");
+                        jos.putNextEntry(newEntry);
+                        jos.write(bytes);
+                        jos.closeEntry();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                });
 
                 jos.close();
             }
