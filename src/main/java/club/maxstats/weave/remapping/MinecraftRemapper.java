@@ -26,17 +26,18 @@ public class MinecraftRemapper {
      */
     private Map<String, String> parseMappings(InputStream mappingsStream) throws IOException {
         Map<String, String> mappings = new HashMap<>();
+        BufferedReader           rdr = new BufferedReader(new InputStreamReader(mappingsStream));
 
-        BufferedReader rdr = new BufferedReader(new InputStreamReader(mappingsStream));
         while (rdr.ready()) {
             String line = rdr.readLine();
             if (line.isEmpty()) continue;
 
             String[] split = line.substring(4).split(" ");
             switch (line.substring(0, 4)) {
-                case "CL: ":
+                case "CL: ": {
                     mappings.put(split[0], split[1]);
                     break;
+                }
                 case "MD: ": {
                     int    i      = split[0].lastIndexOf('/');
                     String clazz  = split[0].substring(0, i);

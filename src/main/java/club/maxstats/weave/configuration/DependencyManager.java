@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Enumeration;
-import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -52,9 +51,8 @@ public class DependencyManager {
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
 
-                    if (!entry.getName().endsWith(".class")) {
+                    if (!entry.getName().endsWith(".class"))
                         continue;
-                    }
 
                     ClassReader cr = new ClassReader(mcJar.getInputStream(entry));
 
