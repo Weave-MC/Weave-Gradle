@@ -14,14 +14,20 @@ import java.security.NoSuchAlgorithmException;
 public class DownloadUtil {
 
     /**
+     * The hashing algorithm used by legacy Minecraft.
+     */
+    private static final String HASH_ALGORITHM = "SHA-1";
+
+    /**
      * Grabs a {@link JsonObject} from the inputted argument.
      *
      * @param url The URL to fetch our JSON from.
      * @return our {@link JsonObject} parsed through {@link InputStreamReader}.
      */
     public static JsonObject getJsonFromURL(String url) {
-        try (InputStream stream = new URL(url).openStream()) {
-            return JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
+        try (InputStream stream = new URL(url).openStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+            return JsonParser.parseReader(reader).getAsJsonObject();
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
@@ -39,10 +45,10 @@ public class DownloadUtil {
             File file = new File(filePath);
             if (!file.exists()) return "";
 
-            MessageDigest digest = MessageDigest.getInstance("SHA1");
+            MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
 
             try (InputStream is = Files.newInputStream(file.toPath())) {
-                byte[] buffer    = new byte[4096];
+                byte[] buffer    = new byte[8192];
                 int    bytesRead = is.read(buffer);
 
                 while (bytesRead >= 0) {
