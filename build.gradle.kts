@@ -3,15 +3,17 @@ plugins {
     `maven-publish`
 }
 
-val projectName: String by project
+val projectName:    String by project
 val projectVersion: String by project
-val projectGroup: String by project
+val projectGroup:   String by project
 
-group = projectGroup
+group   = projectGroup
 version = projectVersion
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
 }
 
 repositories {

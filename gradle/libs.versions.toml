@@ -1,8 +1,8 @@
 [versions]
-asm = "9.4"      # https://asm.ow2.io/versions.html
-gson = "2.10.1"   # https://github.com/google/gson/releases
-lombok = "1.18.22"  # https://projectlombok.org/download
-junit = "5.8.1"    # https://github.com/junit-team/junit5/releases
+asm         = "9.4"      # https://asm.ow2.io/versions.html
+gson        = "2.10.1"   # https://github.com/google/gson/releases
+lombok      = "1.18.22"  # https://projectlombok.org/download
+junit       = "5.8.1"    # https://github.com/junit-team/junit5/releases
 
 [libraries]
 asm         = { module = "org.ow2.asm:asm",                        version.ref = "asm"       }
