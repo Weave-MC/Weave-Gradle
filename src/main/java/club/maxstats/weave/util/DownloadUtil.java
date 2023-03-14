@@ -90,7 +90,7 @@ public class DownloadUtil {
     }
 
     /**
-     * Downloads and checksums the file.
+     * Downloads and checksums a file.
      *
      * @param url             The URL to download from.
      * @param checksum        The checksum to compare to.
