@@ -45,45 +45,43 @@ public class DependencyManager {
         try {
             JarFile                         mcJar   = new JarFile(version.getMinecraftJarCache());
             Enumeration<? extends JarEntry> entries = mcJar.entries();
+            File                            output  = new File(version.getCacheDirectory(), "minecraft-mapped.jar");
+            
+            if (output.exists) return;
 
-            File output = new File(version.getCacheDirectory(), "minecraft-mapped.jar");
-            if (!output.exists() /* TODO create checksums for each mapped jar and compare to the jar file */) {
-                Map<JarEntry, InputStream> classEntries = new HashMap<>();
+            Map<JarEntry, InputStream> classEntries = new HashMap<>();
 
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (!entry.getName().endsWith(".class")) continue;
 
-                    if (!entry.getName().endsWith(".class")) continue;
-
-                    classEntries.put(entry, mcJar.getInputStream(entry));
-                }
-
-                JarOutputStream jos      = new JarOutputStream(Files.newOutputStream(output.toPath()));
-                Remapper        remapper = MinecraftRemapper.create(version);
-
-                classEntries.entrySet().parallelStream().forEach(entry -> {
-                    try {
-                        ClassReader cr = new ClassReader(entry.getValue());
-                        ClassWriter cw = new ClassWriter(0);
-                        cr.accept(new ClassRemapper(cw, remapper), 0);
-
-                        String mappedName = remapper.map(cr.getClassName());
-                        if (mappedName == null) mappedName = cr.getClassName();
-
-                        byte[] bytes = cw.toByteArray();
-
-                        JarEntry newEntry = new JarEntry(mappedName + ".class");
-                        jos.putNextEntry(newEntry);
-                        jos.write(bytes);
-                        jos.closeEntry();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                });
-
-                jos.close();
+                classEntries.put(entry, mcJar.getInputStream(entry));
             }
 
+            JarOutputStream jos      = new JarOutputStream(Files.newOutputStream(output.toPath()));
+            Remapper        remapper = new MinecraftRemapper.create(version);
+
+            classEntries.entrySet().parallelStream().forEach(entry -> {
+                try {
+                    ClassReader cr = new ClassReader(entry.getValue());
+                    ClassWriter cw = new ClassWriter(0);
+                    cr.accept(new ClassRemapper(cw, remapper), 0);
+
+                    String mappedName = remapper.map(cr.getClassName());
+                    if (mappedName == null) mappedName = cr.getClassName();
+
+                    byte[] bytes = cw.toByteArray();
+
+                    JarEntry newEntry = new JarEntry(mappedName + ".class");
+                    jos.putNextEntry(newEntry);
+                    jos.write(bytes);
+                    jos.closeEntry();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            jos.close();
             this.project.getDependencies().add("compileOnly", project.files(output));
         } catch (IOException ex) {
             ex.printStackTrace();
