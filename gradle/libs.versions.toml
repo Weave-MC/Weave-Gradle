@@ -1,14 +1,12 @@
 [versions]
-asm         = "9.4"      # https://asm.ow2.io/versions.html
-gson        = "2.10.1"   # https://github.com/google/gson/releases
-lombok      = "1.18.22"  # https://projectlombok.org/download
-junit       = "5.8.1"    # https://github.com/junit-team/junit5/releases
+asm = "9.4"      # https://asm.ow2.io/versions.html
+junit = "5.8.1"  # https://github.com/junit-team/junit5/releases
+kxSer = "1.5.0"  # https://github.com/Kotlin/kotlinx.serialization/releases
 
 [libraries]
-asm         = { module = "org.ow2.asm:asm",                        version.ref = "asm"       }
-asmtree     = { module = "org.ow2.asm:asm-tree",                   version.ref = "asm"       }
-asmcommons  = { module = "org.ow2.asm:asm-commons",                version.ref = "asm"       }
-gson        = { module = "com.google.code.gson:gson",              version.ref = "gson"      }
-lombok      = { module = "org.projectlombok:lombok",               version.ref = "lombok"    }
-junitapi    = { module = "org.junit.jupiter:junit-jupiter-api",    version.ref = "junit"     }
-junitengine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit"     }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asmTree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
+asmCommons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
+junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+kxSerJSON = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kxSer" }
