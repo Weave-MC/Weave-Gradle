@@ -46,8 +46,8 @@ public class DependencyManager {
             JarFile                         mcJar   = new JarFile(version.getMinecraftJarCache());
             Enumeration<? extends JarEntry> entries = mcJar.entries();
             File                            output  = new File(version.getCacheDirectory(), "minecraft-mapped.jar");
-            
-            if (output.exists) return;
+
+            if (output.exists()) return;
 
             Map<JarEntry, InputStream> classEntries = new HashMap<>();
 
@@ -59,7 +59,7 @@ public class DependencyManager {
             }
 
             JarOutputStream jos      = new JarOutputStream(Files.newOutputStream(output.toPath()));
-            Remapper        remapper = new MinecraftRemapper.create(version);
+            Remapper        remapper = MinecraftRemapper.create(version);
 
             classEntries.entrySet().parallelStream().forEach(entry -> {
                 try {
