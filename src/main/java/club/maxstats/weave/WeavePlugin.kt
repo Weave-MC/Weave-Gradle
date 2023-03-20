@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.create
  * @since 1.0.0
  */
 class WeavePlugin : Plugin<Project> {
+
     /**
      * [Plugin.apply]
      *
@@ -31,4 +32,5 @@ class WeavePlugin : Plugin<Project> {
         val ext = project.extensions.create("minecraft", WeaveMinecraftExtension::class)
         project.afterEvaluate { pullDeps(ext.version.get()) }
     }
+
 }

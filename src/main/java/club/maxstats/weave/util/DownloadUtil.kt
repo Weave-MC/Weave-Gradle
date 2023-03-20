@@ -12,6 +12,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
 object DownloadUtil {
+
     /**
      * Returns the SHA1 checksum of the file as a [String]
      *
@@ -77,4 +78,5 @@ object DownloadUtil {
     fun downloadAndChecksum(url: URL, checksum: String, path: Path) {
         if (checksum(path) != checksum) download(url, path)
     }
+
 }

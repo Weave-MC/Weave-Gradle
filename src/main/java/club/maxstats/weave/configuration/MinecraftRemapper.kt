@@ -19,7 +19,7 @@ private fun InputStream.parseMappings() = bufferedReader().useLines { seq ->
             "CL: " -> split[0] to split[1]
 
             "MD: " -> {
-                val clazz = split[0].substringBeforeLast('/')
+                val clazz  = split[0].substringBeforeLast('/')
                 val method = split[0].substringAfterLast('/')
 
                 "$clazz.$method${split[1]}" to split[2].substringAfterLast('/')
