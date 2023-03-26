@@ -12,7 +12,6 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
 object DownloadUtil {
-
     /**
      * Returns the SHA1 checksum of the file as a [String]
      *
@@ -47,7 +46,7 @@ object DownloadUtil {
      * @param url The URL to download from.
      * @param path The path to download to.
      */
-    fun download(url: URL, path: Path) {
+    private fun download(url: URL, path: Path) {
         runCatching {
             url.openStream().use { input ->
                 Files.createDirectories(path.parent)
@@ -63,7 +62,7 @@ object DownloadUtil {
      *
      * @param url The URL to download from
      */
-    fun fetch(url: URL) = runCatching { url.openStream().readBytes().decodeToString() }
+    private fun fetch(url: URL) = runCatching { url.openStream().readBytes().decodeToString() }
         .onFailure { it.printStackTrace() }.getOrNull()
 
     fun fetch(url: String) = fetch(URL(url))
@@ -78,5 +77,4 @@ object DownloadUtil {
     fun downloadAndChecksum(url: URL, checksum: String, path: Path) {
         if (checksum(path) != checksum) download(url, path)
     }
-
 }

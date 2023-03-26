@@ -5,8 +5,7 @@ import club.maxstats.weave.util.Constants
 import java.io.File
 import java.io.InputStream
 
-enum class MinecraftVersion(val id: String, val mappings: String) {
-
+enum class MinecraftVersion(val id: String, private val mappings: String) {
     V1_7_10("1.7.10", "lunar_named_b2_1.7.10.xsrg"),
     V1_8_9("1.8.9", "lunar_named_b2_1.8.9.xsrg"),
     V1_12_2("1.12.2", "lunar_named_b2_1.12.2.xsrg");
@@ -29,7 +28,6 @@ enum class MinecraftVersion(val id: String, val mappings: String) {
     val minecraftJarCache = File(cacheDirectory, "client.jar")
 
     companion object {
-
         /**
          * Converts the version String into a [MinecraftVersion] enum.
          *
@@ -40,7 +38,5 @@ enum class MinecraftVersion(val id: String, val mappings: String) {
         @JvmStatic
         fun fromString(version: String) =
             enumValues<MinecraftVersion>().find { it.id == version } ?: error("No such version: $version")
-
     }
-
 }

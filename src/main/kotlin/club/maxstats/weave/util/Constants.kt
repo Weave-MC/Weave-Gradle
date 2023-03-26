@@ -8,7 +8,6 @@ import java.io.File
  * be referenced throughout the project.
  */
 object Constants {
-
     /**
      * The gradle cache directory.
      *
@@ -27,5 +26,4 @@ object Constants {
      * The version manifest URL
      */
     const val VERSION_MANIFEST = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"
-
 }
