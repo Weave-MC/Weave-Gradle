@@ -40,7 +40,7 @@ gradlePlugin {
     plugins {
         create("weave") {
             // Using jitpack.io for the time being
-            id = "com.github.weave-mc.weave"
+            id = "com.github.weave-mc.weave-gradle"
             displayName = "Weave Plugin"
             description =
                 "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"

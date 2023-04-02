@@ -35,7 +35,7 @@ private fun Project.addMinecraftAssets(version: MinecraftVersion) {
     val versionInfo = DownloadUtil.fetch(versionEntry.url).decodeJSON<VersionInfo>() ?: return
 
     val client = versionInfo.downloads.client
-    DownloadUtil.downloadAndChecksum(URL(client.url), client.sha1, version.cacheDirectory.toPath())
+    DownloadUtil.downloadAndChecksum(URL(client.url), client.sha1, version.minecraftJarCache.toPath())
 
     repositories.maven {
         name = "mojang"
