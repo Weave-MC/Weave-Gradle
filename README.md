@@ -12,17 +12,7 @@
 
 ---
 
-A Gradle build system plugin used to automate the setup of a modding environment.
-
-### Getting Started
-
-- Make sure a [JDK 17][jdk] is installed on your system.
-
-- To test (Windows and Unix)
-
-```bash
-java --version # should output some JDK 17.
-```
+A Gradle build system plugin used to automate the setup of a Weave modding environment.
 
 ### Usage
 
