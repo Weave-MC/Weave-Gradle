@@ -24,33 +24,9 @@ A Gradle build system plugin used to automate the setup of a modding environment
 java --version # should output some JDK 17.
 ```
 
-### Installation
-
-#### Building with Gradle
-
-- `git clone` the project, this can be achieved by installing [git][git], then running
-
-```bash
-git clone https://github.com/Weave-MC/Weave-Loader.git "Weave-Loader"
-```
-
-- **UN*X**
-
-```bash
-cd $_ ; chmod +x ./gradlew && ./gradlew build
-```
-
-> Note that `$_` is the last argument from the previous command, should be run after cloning.
-
-- **Windows**
-
-```powershell
-cd Weave-Loader ; .\gradlew.bat build
-```
-
 ### Usage
 
-You can use Weave-Loader as a dependency in your project by implementing it as a repository. To do this, add the
+You can use Weave-Gradle as a plugin in your project by implementing it using JitPack. To do this, add the
 following code to your `build.gradle` file.
 
 - **Groovy DSL**
@@ -72,7 +48,7 @@ pluginManagement {
 
 ```gradle
 plugins {
-    id "com.github.weave-mc.weave" version "ec59a8bceb"
+    id "com.github.weave-mc.weave-gradle" version ${VERSION}
 }
 ```
 
@@ -92,11 +68,11 @@ pluginManagement {
 
 ```kt
 plugins {
-    id("com.github.weave-mc.weave") version ("ec59a8bceb")
+    id("com.github.weave-mc.weave-gradle") version (${VERSION})
 }
 ```
 
-> Replace `${VERSION}` with the version of Weave-Loader in the Build Reference. (soon:tm:)
+> Replace `${VERSION}` with the version of Weave-Gradle in the Build Reference. (soon:tm:)
 
 ---
 
@@ -108,4 +84,4 @@ Weave is licensed under the [GNU General Public License Version 3][license].
 
 [git]:     https://git-scm.com/
 [jdk]:     https://www.azul.com/downloads/?version=java-17-lts&package=jdk
-[license]: https://github.com/Weave-MC/Weave-Loader/blob/main/LICENSE
+[license]: https://github.com/Weave-MC/Weave-Gradle/blob/main/LICENSE
