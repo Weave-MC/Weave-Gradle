@@ -12,6 +12,8 @@
 
 ---
 
+### Fork renamed 'minecraft' extension to 'weavecraft' to prevent conflict with other modding libraries
+
 A Gradle build system plugin used to automate the setup of a Weave modding environment.
 
 ### Usage
