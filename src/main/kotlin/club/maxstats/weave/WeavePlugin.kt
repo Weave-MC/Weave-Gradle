@@ -29,7 +29,7 @@ class WeavePlugin : Plugin<Project> {
         project.repositories.mavenCentral()
         project.repositories.mavenLocal()
 
-        val ext = project.extensions.create("minecraft", WeaveMinecraftExtension::class)
+        val ext = project.extensions.create("weavecraft", WeaveMinecraftExtension::class)
         project.afterEvaluate { pullDeps(ext.version.get()) }
     }
 }
