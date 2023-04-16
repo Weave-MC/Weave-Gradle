@@ -43,8 +43,8 @@ gradlePlugin {
             id = "com.github.weave-mc.weave-gradle"
             displayName = "Weave Plugin"
             description =
-                "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"
-            implementationClass = "${group}.WeavePlugin"
+                "Implements Remapped Minecraft libraries intended for developing Weave Mods"
+            implementationClass = "net.weavemc.gradle.WeavePlugin"
         }
     }
 }

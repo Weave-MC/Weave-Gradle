@@ -1,4 +1,4 @@
-package club.maxstats.weave.configuration
+package net.weavemc.gradle.configuration
 
 import org.objectweb.asm.commons.SimpleRemapper
 import java.io.InputStream

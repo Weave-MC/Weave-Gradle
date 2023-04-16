@@ -1,7 +1,7 @@
-package club.maxstats.weave.configuration
+package net.weavemc.gradle.configuration
 
-import club.maxstats.weave.WeavePlugin
-import club.maxstats.weave.util.Constants
+import net.weavemc.gradle.WeavePlugin
+import net.weavemc.gradle.util.Constants
 import java.io.File
 import java.io.InputStream
 

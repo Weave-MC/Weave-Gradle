@@ -1,4 +1,4 @@
-package club.maxstats.weave.util
+package net.weavemc.gradle.util
 
 import kotlinx.serialization.json.Json
 import java.io.File

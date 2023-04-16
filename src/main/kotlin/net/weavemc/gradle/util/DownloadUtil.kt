@@ -1,4 +1,4 @@
-package club.maxstats.weave.util
+package net.weavemc.gradle.util
 
 import java.io.IOException
 import java.net.URL

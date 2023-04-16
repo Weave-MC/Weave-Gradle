@@ -1,7 +1,7 @@
-package club.maxstats.weave
+package net.weavemc.gradle
 
-import club.maxstats.weave.configuration.WeaveMinecraftExtension
-import club.maxstats.weave.configuration.pullDeps
+import net.weavemc.gradle.configuration.WeaveMinecraftExtension
+import net.weavemc.gradle.configuration.pullDeps
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin

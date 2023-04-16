@@ -1,7 +1,7 @@
-package club.maxstats.weave.configuration
+package net.weavemc.gradle.configuration
 
-import club.maxstats.weave.util.Constants
-import club.maxstats.weave.util.DownloadUtil
+import net.weavemc.gradle.util.Constants
+import net.weavemc.gradle.util.DownloadUtil
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.gradle.api.Project
