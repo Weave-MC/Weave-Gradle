@@ -5,12 +5,12 @@ import club.maxstats.weave.util.DownloadUtil
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.maven
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.commons.ClassRemapper
 import java.io.File
 import java.net.URL
-import java.nio.file.Files
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
@@ -37,47 +37,38 @@ private fun Project.addMinecraftAssets(version: MinecraftVersion) {
     val client = versionInfo.downloads.client
     DownloadUtil.downloadAndChecksum(URL(client.url), client.sha1, version.minecraftJarCache.toPath())
 
-    repositories.maven {
-        name = "mojang"
-        setUrl("https://libraries.minecraft.net/")
-    }
+    repositories.maven("https://libraries.minecraft.net/")
 
     versionInfo.libraries.filter { "twitch-platform" !in it.name && "twitch-external" !in it.name }
         .forEach { dependencies.add("compileOnly", it.name) }
 }
 
 private fun Project.addMappedMinecraft(version: MinecraftVersion) = runCatching {
-    val mcJar = JarFile(version.minecraftJarCache)
-    val entries = mcJar.entries()
     val mapped = File(version.cacheDirectory, "minecraft-mapped.jar")
-
-    // TODO: create checksums for each mapped jar and compare to the jar file
-    if (!mapped.exists()) {
-        val output = JarOutputStream(Files.newOutputStream(mapped.toPath()))
-        val remapper = createMinecraftRemapper(version)
-
-        while (entries.hasMoreElements()) {
-            val entry = entries.nextElement()
-            if (!entry.name.endsWith(".class")) continue
-
-            val reader = ClassReader(mcJar.getInputStream(entry))
-            val writer = ClassWriter(0)
-
-            reader.accept(ClassRemapper(writer, remapper), 0)
-
-            val mappedName = remapper.map(reader.className) ?: reader.className
-            val bytes = writer.toByteArray()
-
-            val newEntry = JarEntry("$mappedName.class")
-            output.putNextEntry(newEntry)
-            output.write(bytes)
-            output.closeEntry()
-        }
-
-        output.close()
+    if(mapped.exists()) {
+        dependencies.add("compileOnly", files(mapped))
+        return@runCatching
     }
 
-    dependencies.add("compileOnly", project.files(mapped))
+    val remapper = createMinecraftRemapper(version)
+
+    JarFile(version.minecraftJarCache).use { mcJar ->
+        JarOutputStream(mapped.outputStream()).use { outputStream ->
+            for (entry in mcJar.entries()) {
+                if (!entry.name.endsWith(".class")) continue
+
+                val reader = ClassReader(mcJar.getInputStream(entry))
+                val writer = ClassWriter(0)
+                reader.accept(ClassRemapper(writer, remapper), 0)
+
+                val mappedName = remapper.map(reader.className) ?: reader.className
+                outputStream.putNextEntry(JarEntry("$mappedName.class"))
+                outputStream.write(writer.toByteArray())
+            }
+        }
+    }
+
+    dependencies.add("compileOnly", files(mapped))
 }.onFailure { it.printStackTrace() }
 
 @Serializable

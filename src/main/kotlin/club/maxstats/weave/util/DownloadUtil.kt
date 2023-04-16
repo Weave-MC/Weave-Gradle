@@ -7,7 +7,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
@@ -23,7 +22,7 @@ object DownloadUtil {
         else {
             val digest = MessageDigest.getInstance("SHA-1")
             file.inputStream().use { input ->
-                val buffer = ByteArray(0x2000)
+                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
                 var read: Int
 
                 while (input.read(buffer).also { read = it } >= 0) {
@@ -36,8 +35,6 @@ object DownloadUtil {
     } catch (ex: IOException) {
         ex.printStackTrace()
         null
-    } catch (ignored: NoSuchAlgorithmException) {
-        null
     }
 
     /**
@@ -46,13 +43,13 @@ object DownloadUtil {
      * @param url The URL to download from.
      * @param path The path to download to.
      */
-    private fun download(url: URL, path: Path) {
-        runCatching {
-            url.openStream().use { input ->
-                Files.createDirectories(path.parent)
-                Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING)
-            }
-        }.onFailure { it.printStackTrace() }
+    private fun download(url: URL, path: Path) = try {
+        url.openStream().use { input ->
+            Files.createDirectories(path.parent)
+            Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING)
+        }
+    }catch (e: Exception) {
+        e.printStackTrace()
     }
 
     fun download(url: String, path: String) = download(URL(url), Paths.get(path))
