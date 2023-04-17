@@ -4,6 +4,7 @@ import net.weavemc.gradle.util.Constants
 import net.weavemc.gradle.util.DownloadUtil
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import net.weavemc.gradle.util.AccessWidener
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.maven
 import org.objectweb.asm.ClassReader
@@ -58,12 +59,12 @@ private fun Project.addMappedMinecraft(version: MinecraftVersion) = runCatching 
                 if (!entry.name.endsWith(".class")) continue
 
                 val reader = ClassReader(mcJar.getInputStream(entry))
-                val writer = ClassWriter(0)
-                reader.accept(ClassRemapper(writer, remapper), 0)
+                val cw = ClassWriter(0)
+                reader.accept(AccessWidener(ClassRemapper(cw, remapper)), 0)
 
                 val mappedName = remapper.map(reader.className) ?: reader.className
                 outputStream.putNextEntry(JarEntry("$mappedName.class"))
-                outputStream.write(writer.toByteArray())
+                outputStream.write(cw.toByteArray())
             }
         }
     }
