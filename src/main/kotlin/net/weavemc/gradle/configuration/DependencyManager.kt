@@ -1,10 +1,10 @@
 package net.weavemc.gradle.configuration
 
-import net.weavemc.gradle.util.Constants
-import net.weavemc.gradle.util.DownloadUtil
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import net.weavemc.gradle.util.AccessWidener
+import net.weavemc.gradle.util.Constants
+import net.weavemc.gradle.util.DownloadUtil
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.maven
 import org.objectweb.asm.ClassReader
@@ -44,9 +44,14 @@ private fun Project.addMinecraftAssets(version: MinecraftVersion) {
         .forEach { dependencies.add("compileOnly", it.name) }
 }
 
+/**
+ * Adds the mapped Minecraft JAR to the project's dependencies.
+ *
+ * @param version The Minecraft version for which to add the mapped JAR.
+ */
 private fun Project.addMappedMinecraft(version: MinecraftVersion) = runCatching {
     val mapped = File(version.cacheDirectory, "minecraft-mapped.jar")
-    if(mapped.exists()) {
+    if (mapped.exists()) {
         dependencies.add("compileOnly", files(mapped))
         return@runCatching
     }
@@ -72,20 +77,53 @@ private fun Project.addMappedMinecraft(version: MinecraftVersion) = runCatching 
     dependencies.add("compileOnly", files(mapped))
 }.onFailure { it.printStackTrace() }
 
+/**
+ * Represents a version manifest containing a list of manifest versions
+ *
+ * @property versions The list of manifest versions
+ */
 @Serializable
 private data class VersionManifest(val versions: List<ManifestVersion>)
 
+/**
+ * Represents a manifest version with an ID and URL.
+ *
+ * @property id The ID of the manifest version.
+ * @property url The URL of the manifest version.
+ */
 @Serializable
 private data class ManifestVersion(val id: String, val url: String)
 
+/**
+ * Represents version information containing downloads and a list of libraries.
+ *
+ * @property downloads The version downloads.
+ * @property libraries The list of libraries.
+ */
 @Serializable
 private data class VersionInfo(val downloads: VersionDownloads, val libraries: List<Library>)
 
+/**
+ * Represents version downloads containing the client download.
+ *
+ * @property client The client download.
+ */
 @Serializable
 private data class VersionDownloads(val client: VersionDownload)
 
+/**
+ * Represents a version download with a URL and SHA1 hash.
+ *
+ * @property url The URL of the version download.
+ * @property sha1 The SHA1 hash of the version download.
+ */
 @Serializable
 private data class VersionDownload(val url: String, val sha1: String)
 
+/**
+ * Represents a library with a name.
+ *
+ * @property name The name of the library.
+ */
 @Serializable
 private data class Library(val name: String)

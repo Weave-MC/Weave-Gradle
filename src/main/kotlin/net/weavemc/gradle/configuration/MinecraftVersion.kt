@@ -28,6 +28,7 @@ enum class MinecraftVersion(val id: String, private val mappings: String) {
     val minecraftJarCache = File(cacheDirectory, "client.jar")
 
     companion object {
+
         /**
          * Converts the version String into a [MinecraftVersion] enum.
          *

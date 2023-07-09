@@ -11,6 +11,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
 object DownloadUtil {
+
     /**
      * Returns the SHA1 checksum of the file as a [String]
      *

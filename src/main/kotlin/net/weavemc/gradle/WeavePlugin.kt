@@ -19,9 +19,8 @@ import org.gradle.kotlin.dsl.create
 class WeavePlugin : Plugin<Project> {
 
     /**
-     * [Plugin.apply]
-     *
      * @param project The target project.
+     * @see Plugin.apply
      */
     override fun apply(project: Project) {
         // Applying our default plugins
