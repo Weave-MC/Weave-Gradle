@@ -14,7 +14,7 @@ version = projectVersion
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17)) // LunarClient need this
     }
 }
 
@@ -37,6 +37,10 @@ dependencies {
 
     // Kotlinx.serialization JSON library
     implementation(libs.kxSerJSON) // version 1.5.0
+
+    // LauncherLib dep
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 tasks.test {
