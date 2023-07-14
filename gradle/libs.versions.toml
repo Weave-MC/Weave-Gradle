@@ -1,6 +1,6 @@
 [versions]
 asm = "9.4"      # https://asm.ow2.io/versions.html
-junit = "5.8.1"  # https://github.com/junit-team/junit5/releases
+junit = "5.9.3"  # https://github.com/junit-team/junit5/releases
 kxSer = "1.5.0"  # https://github.com/Kotlin/kotlinx.serialization/releases
 
 [libraries]

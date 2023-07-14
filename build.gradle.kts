@@ -24,16 +24,26 @@ repositories {
 
 dependencies {
     // Jupiter's JUNIT
-    // TODO: write unit tests
-    testImplementation(libs.junitApi)
-    testRuntimeOnly(libs.junitEngine)
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+    testImplementation(platform("org.junit:junit-bom:5.9.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+//    testImplementation(libs.junitApi) // version 5.8.1
+//    testRuntimeOnly(libs.junitEngine) // version 5.8.1
 
     // OW2 ASM
-    implementation(libs.asm)
-    implementation(libs.asmCommons)
+    implementation(libs.asm) // version 9.4
+    implementation(libs.asmCommons) // version 9.4
 
     // Kotlinx.serialization JSON library
-    implementation(libs.kxSerJSON)
+    implementation(libs.kxSerJSON) // version 1.5.0
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 gradlePlugin {
