@@ -14,7 +14,7 @@ version = projectVersion
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17)) // LunarClient need this
+        languageVersion.set(JavaLanguageVersion.of(17)) // LunarClient needs this
     }
 }
 

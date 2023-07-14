@@ -38,7 +38,7 @@ class WeavePlugin : Plugin<Project> {
             val version = minecraftExtension.version.get().id
             val baseDir = LunarDir.lunarDir.absolutePath + "/offline/multiver"
             val texturesDir = LunarDir.lunarDir.absolutePath + "/textures"
-            val mcArgs = MinecraftArgs(minecraftExtension.runDir.get(), texturesDir, 300, 400)
+            val mcArgs = MinecraftArgs(minecraftExtension.runDir.get(), texturesDir, 600, 400)
             val javaExec = System.getProperty("java.home") + "/bin/java"
             val jvmArgs = minecraftExtension.jvmArgs.get()
             val programArgs = minecraftExtension.programArgs.get()

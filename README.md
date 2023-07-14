@@ -12,7 +12,7 @@
 
 ---
 
-A Gradle build system plugin used to automate the setup of a Weave modding environment.
+A Gradle build system plugin used to automate the setup of a Weave modding environment and testing Minecraft.
 
 ### Usage
 
