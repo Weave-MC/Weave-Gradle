@@ -1,4 +1,4 @@
-package club.maxstats.weave.util
+package net.weavemc.gradle.util
 
 import java.io.IOException
 import java.net.URL
@@ -74,7 +74,7 @@ object DownloadUtil {
      * @param checksum The checksum to compare to.
      * @param path The path to download to.
      */
-    fun downloadAndChecksum(url: URL, checksum: String, path: Path) {
+    fun checksumAndDownload(url: URL, checksum: String, path: Path) {
         if (checksum(path) != checksum) download(url, path)
     }
 }
