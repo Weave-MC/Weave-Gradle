@@ -1,6 +1,5 @@
 plugins {
     kotlin("plugin.serialization") version "1.8.10"
-    `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
 }
@@ -12,22 +11,11 @@ val projectGroup: String by project
 group = projectGroup
 version = projectVersion
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // Jupiter's JUNIT
-    // TODO: write unit tests
-    testImplementation(libs.junitApi)
-    testRuntimeOnly(libs.junitEngine)
-
     // OW2 ASM
     implementation(libs.asm)
     implementation(libs.asmCommons)
@@ -40,14 +28,21 @@ gradlePlugin {
     plugins {
         create("weave") {
             // Using jitpack.io for the time being
-            id = "com.github.exejar.weave-gradle"
-            displayName = "Weave Plugin"
+            id = "com.github.weave-mc.weave-gradle"
+            displayName = "Weave-Gradle"
             description =
-                "Implements Remapped Minecraft libraries and Weave-Loader intended for developing Minecraft Mods"
-            implementationClass = "${group}.WeavePlugin"
+                "Implements Remapped Minecraft libraries intended for developing Minecraft mods with Weave"
+            implementationClass = "${group}.WeaveGradle"
         }
     }
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()
+    .configureEach {
+        compilerOptions
+            .languageVersion
+            .set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+    }
 
 // Use Gradle Plugin Portal later on when the plugin is finished
 // val publishProps = Properties()
