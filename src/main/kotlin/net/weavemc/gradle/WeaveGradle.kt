@@ -1,7 +1,7 @@
 package net.weavemc.gradle
 
+import com.grappenmaker.mappings.MappingsLoader
 import net.weavemc.gradle.configuration.*
-import net.weavemc.gradle.mapping.loadMappings
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -41,9 +41,9 @@ class WeaveGradle : Plugin<Project> {
         }
 
 //        Remapping Mixin annotations is annoying
-//        project.tasks.named("jar") {
+        project.tasks.named("jar") {
 //            finalizedBy(remapJarTask)
-//        }
+        }
     }
 
     /**
@@ -59,7 +59,7 @@ class WeaveGradle : Plugin<Project> {
         @TaskAction
         fun remap() {
             val ext = this.project.extensions["weavecraft"] as WeaveMinecraftExtension
-            val fullMappings = loadMappings(ext.mappings.get().mappingsStream(ext.version.get()).toLines())
+            val fullMappings = MappingsLoader.loadMappings(ext.mappings.get().mappingsStream(ext.version.get()).toLines())
 
             remapJar(fullMappings, inputJar, outputJar, "named", "official")
         }

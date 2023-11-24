@@ -1,8 +1,8 @@
 package net.weavemc.gradle.configuration
 
-import net.weavemc.gradle.mapping.LambdaAwareRemapper
-import net.weavemc.gradle.mapping.Mappings
-import net.weavemc.gradle.mapping.MappingsRemapper
+import com.grappenmaker.mappings.LambdaAwareRemapper
+import com.grappenmaker.mappings.Mappings
+import com.grappenmaker.mappings.MappingsRemapper
 import org.objectweb.asm.*
 import java.io.File
 import java.util.jar.JarEntry

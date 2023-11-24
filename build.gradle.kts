@@ -13,6 +13,7 @@ version = projectVersion
 
 repositories {
     mavenCentral()
+    maven("https://repo.weavemc.dev/releases")
 }
 
 dependencies {
@@ -22,6 +23,8 @@ dependencies {
 
     // Kotlinx.serialization JSON library
     implementation(libs.kxSerJSON)
+
+    implementation(libs.mappingsUtil)
 }
 
 gradlePlugin {

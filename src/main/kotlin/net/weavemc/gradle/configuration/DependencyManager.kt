@@ -1,7 +1,7 @@
 package net.weavemc.gradle.configuration
 
+import com.grappenmaker.mappings.MappingsLoader
 import kotlinx.serialization.SerialName
-import net.weavemc.gradle.mapping.loadMappings
 import net.weavemc.gradle.util.Constants
 import net.weavemc.gradle.util.DownloadUtil
 import kotlinx.serialization.Serializable
@@ -61,7 +61,7 @@ private fun addMojangMappings(version: MinecraftVersion, versionInfo: VersionInf
 private fun Project.addMappedMinecraft(version: MinecraftVersion, mappings: MinecraftMappings) = runCatching {
     val mapped = File(version.cacheDirectory, "client-${mappings.id}.jar")
     if (!mapped.exists()) {
-        val fullMappings = loadMappings(mappings.mappingsStream(version).toLines())
+        val fullMappings = MappingsLoader.loadMappings(mappings.mappingsStream(version).toLines())
         remapJar(fullMappings, version.minecraftJarCache, mapped)
     }
 
