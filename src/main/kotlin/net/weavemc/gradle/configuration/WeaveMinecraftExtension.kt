@@ -15,12 +15,12 @@ interface WeaveMinecraftExtension {
 }
 
 enum class MinecraftMappings(val id: String) {
-    MOJMAP("mojmap"),
-    SRG("srg"),
+    MOJANG("mojang"),
+    MCP("mcp"),
     YARN("yarn");
 
     fun mappingsStream(version: MinecraftVersion): InputStream {
-        return if (this == MOJMAP) {
+        return if (this == MOJANG) {
             File(version.cacheDirectory, "mojang.mappings").inputStream()
         } else {
             WeaveGradle::class.java.getResourceAsStream("/mappings/$id/${version.id}")
