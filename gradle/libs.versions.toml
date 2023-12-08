@@ -11,4 +11,4 @@ asmCommons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 kxSerJSON = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kxSer" }
-mappingsUtil = { module = "com.grappenmaker:mappings-util", version.ref = "mappingsUtil" }
+mappingsUtil = { module = "io.github.770grappenmaker:mappings-util", version.ref = "mappingsUtil" }
