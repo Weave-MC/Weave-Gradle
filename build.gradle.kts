@@ -13,7 +13,6 @@ version = projectVersion
 
 repositories {
     mavenCentral()
-    maven("https://repo.weavemc.dev/releases")
 }
 
 dependencies {
@@ -27,19 +26,6 @@ dependencies {
     implementation(libs.mappingsUtil)
 }
 
-gradlePlugin {
-    plugins {
-        create("weave") {
-            // Using jitpack.io for the time being
-            id = "com.github.weave-mc.weave-gradle"
-            displayName = "Weave-Gradle"
-            description =
-                "Implements Remapped Minecraft libraries intended for developing Minecraft mods with Weave"
-            implementationClass = "${group}.WeaveGradle"
-        }
-    }
-}
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()
     .configureEach {
         compilerOptions
@@ -47,22 +33,27 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()
             .set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
     }
 
-// Use Gradle Plugin Portal later on when the plugin is finished
-// val publishProps = Properties()
-// file("gradle-publish.properties").inputStream().use { publishProps.load(it) }
-//
-// publishing {
-//     repositories {
-//         maven {
-//             url = uri("https://plugins.gradle.org/m2/")
-//             credentials {
-//                 username = publishProps.getProperty("publishKey")
-//                 password = publishProps.getProperty("publishSecret")
-//             }
-//         }
-//     }
-// }
-//
-// tasks.getByName<Test>("test") {
-//     useJUnitPlatform()
-// }
+publishing {
+    repositories {
+        maven {
+            name = "WeaveMC"
+            url = uri("https://repo.weavemc.dev/releases")
+            credentials(PasswordCredentials::class)
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+    }
+}
+
+gradlePlugin {
+    plugins {
+        create("weave") {
+            id = projectGroup
+            displayName = projectName
+            description =
+                "Implements Remapped Minecraft libraries intended for developing Minecraft mods with Weave"
+            implementationClass = "$projectGroup.WeaveGradle"
+        }
+    }
+}
