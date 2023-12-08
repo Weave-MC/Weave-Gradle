@@ -28,7 +28,6 @@ enum class MinecraftMappings(val id: String) {
         }
     }
 
-
     companion object {
         /**
          * Converts the mapping String into a [MinecraftMappings] enum.
