@@ -83,7 +83,9 @@ private data class VersionInfo(val downloads: VersionDownloads, val libraries: L
 @Serializable
 private data class VersionDownloads(
     val client: VersionDownload,
-    @SerialName("client_mappings") val mappings: ClientMappings // not all versions will have a client_mappings url
+
+    @SerialName("client_mappings")
+    val mappings: ClientMappings = ClientMappings("", "", -1) // not all versions will have a client_mappings url
 )
 
 @Serializable
