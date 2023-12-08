@@ -27,12 +27,10 @@ class WeaveGradle : Plugin<Project> {
     override fun apply(project: Project) {
         // Applying our default plugins
         project.pluginManager.apply(JavaPlugin::class)
-        project.repositories.mavenCentral()
-        project.repositories.mavenLocal()
 
         val ext = project.extensions.create("weavecraft", WeaveMinecraftExtension::class)
         project.afterEvaluate {
-            pullDeps(ext.version.get(), ext.mappings.getOrElse(MinecraftMappings.YARN))
+            pullDeps(ext.version.getOrElse(MinecraftVersion.V1_8), ext.mappings.getOrElse(MinecraftMappings.MCP))
         }
 
         val remapJarTask = project.tasks.register("remapJar", RemapJarTask::class.java) {
