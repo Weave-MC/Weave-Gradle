@@ -13,6 +13,7 @@ version = projectVersion
 
 repositories {
     mavenCentral()
+    maven("https://repo.weavemc.dev/releases")
 }
 
 dependencies {

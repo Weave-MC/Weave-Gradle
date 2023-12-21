@@ -1,6 +1,7 @@
 package net.weavemc.gradle.configuration
 
 import com.grappenmaker.mappings.MappingsLoader
+import com.grappenmaker.mappings.remapJar
 import kotlinx.serialization.SerialName
 import net.weavemc.gradle.util.Constants
 import net.weavemc.gradle.util.DownloadUtil
