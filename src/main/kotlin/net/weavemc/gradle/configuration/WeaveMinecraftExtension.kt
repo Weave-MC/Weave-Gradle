@@ -42,9 +42,9 @@ enum class MinecraftMappings(val id: String) {
     }
 }
 enum class MinecraftVersion(val id: String) {
-    V1_7("1.7"),
-    V1_8("1.8"),
-    V1_12("1.12"),
+    V1_7_10("1.7.10"),
+    V1_8_9("1.8.9"),
+    V1_12_("1.12.2"),
     V1_16("1.16"),
     V1_17("1.17"),
     V1_18("1.18"),
