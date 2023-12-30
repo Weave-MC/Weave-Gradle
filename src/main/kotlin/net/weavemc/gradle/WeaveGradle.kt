@@ -31,7 +31,7 @@ class WeaveGradle : Plugin<Project> {
         // Applying our default plugins
         project.pluginManager.apply(JavaPlugin::class)
 
-        val ext = project.extensions.create("weavecraft", WeaveMinecraftExtension::class)
+        val ext = project.extensions.create("minecraft", WeaveMinecraftExtension::class)
         val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
         val mappings = ext.mappings.getOrElse(MinecraftMappings.MCP)
 
@@ -42,10 +42,10 @@ class WeaveGradle : Plugin<Project> {
         val remapJarTask = project.tasks.register("remapJar", RemapJarTask::class.java) {
             minecraftJar = JarFile("${version.cacheDirectory}${File.separator}client-${mappings.id}.jar")
             inputJar = project.tasks["jar"].outputs.files.singleFile
-            outputJar = File("${project.buildDir}${File.separator}libs", "${project.name}-${project.version}.jar")
+            outputJar = inputJar.parentFile.resolve("${inputJar.nameWithoutExtension}-mapped.${inputJar.extension}")
         }
 
-        project.tasks.named("jar") {
+        project.tasks.named("assemble") {
             finalizedBy(remapJarTask)
         }
     }
@@ -66,7 +66,7 @@ class WeaveGradle : Plugin<Project> {
 
         @TaskAction
         fun remap() {
-            val ext = this.project.extensions["weavecraft"] as WeaveMinecraftExtension
+            val ext = this.project.extensions["minecraft"] as WeaveMinecraftExtension
             val fullMappings =
                 MappingsLoader.loadMappings(ext.mappings.get().mappingsStream(ext.version.get()).toLines())
 
