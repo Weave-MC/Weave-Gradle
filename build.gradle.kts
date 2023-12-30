@@ -11,8 +11,11 @@ val projectGroup: String by project
 group = projectGroup
 version = projectVersion
 
+kotlin.jvmToolchain(8)
+
 repositories {
     mavenCentral()
+    mavenLocal()
     maven("https://repo.weavemc.dev/releases")
 }
 
