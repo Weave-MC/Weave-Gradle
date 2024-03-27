@@ -14,8 +14,8 @@ version = projectVersion
 kotlin.jvmToolchain(8)
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
     maven("https://repo.weavemc.dev/releases")
 }
 

@@ -40,7 +40,6 @@ class WeaveGradle : Plugin<Project> {
         project.pluginManager.apply(JavaPlugin::class)
 
         val ext = project.extensions.create("minecraft", WeaveMinecraftExtension::class)
-        val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
 
         project.afterEvaluate {
             if (!ext.configuration.isPresent) throw GradleException(
@@ -51,17 +50,19 @@ class WeaveGradle : Plugin<Project> {
                 "Set a Minecraft version through the minecraft {} block!"
             )
 
+            val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
             pullDeps(version, ext.configuration.get().namespace)
         }
 
         project.tasks.withType<ProcessResources>().configureEach {
             doLast {
-                destinationDir.resolve("weave.mod.json")
-                    .writeText(Constants.JSON.encodeToString(ext.configuration.get()))
+                val config = ext.configuration.get().copy(compiledFor = ext.version.get().versionName)
+                destinationDir.resolve("weave.mod.json").writeText(Constants.JSON.encodeToString(config))
             }
         }
 
         val remapJarTask = project.tasks.register("remapJar", RemapJarTask::class.java) {
+            val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
             minecraftJar = version.mappedJarCache(ext.configuration.get().namespace)
             inputJar = project.tasks["jar"].outputs.files.singleFile
             outputJar = inputJar.parentFile.resolve("${inputJar.nameWithoutExtension}-mapped.${inputJar.extension}")
@@ -91,6 +92,10 @@ class WeaveGradle : Plugin<Project> {
             val fullMappings = version.loadMergedMappings()
 
             val mid = ext.configuration.get().namespace
+            require(mid in fullMappings.namespaces) {
+                "Namespace $mid is not available in mappings! Available namespaces are: ${fullMappings.namespaces}"
+            }
+
             remapJar(fullMappings, inputJar, outputJar, mid, "official", files = listOf(minecraftJar))
         }
     }
