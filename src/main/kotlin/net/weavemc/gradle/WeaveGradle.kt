@@ -1,13 +1,17 @@
 package net.weavemc.gradle
 
-import com.grappenmaker.mappings.*
-import net.weavemc.gradle.configuration.*
+import com.grappenmaker.mappings.remapJar
+import kotlinx.serialization.encodeToString
+import net.weavemc.gradle.configuration.WeaveMinecraftExtension
+import net.weavemc.gradle.configuration.pullDeps
+import net.weavemc.gradle.util.Constants
 import net.weavemc.gradle.util.mappedJarCache
 import net.weavemc.gradle.util.minecraftJarCache
 import net.weavemc.internals.MappingsRetrieval
-import net.weavemc.internals.MappingsType
 import net.weavemc.internals.MinecraftVersion
+import net.weavemc.internals.ModConfig
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
@@ -18,6 +22,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.withType
+import org.gradle.language.jvm.tasks.ProcessResources
 import java.io.File
 
 /**
@@ -35,11 +41,28 @@ class WeaveGradle : Plugin<Project> {
 
         val ext = project.extensions.create("minecraft", WeaveMinecraftExtension::class)
         val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
-        val mappings = ext.mappings.getOrElse(MappingsType.MCP)
 
-        project.afterEvaluate { pullDeps(version, mappings) }
+        project.afterEvaluate {
+            if (!ext.configuration.isPresent) throw GradleException(
+                "Configuration is missing, make sure to add a configuration through the minecraft {} block!"
+            )
+
+            if (!ext.version.isPresent) throw GradleException(
+                "Set a Minecraft version through the minecraft {} block!"
+            )
+
+            pullDeps(version, ext.configuration.get().namespace)
+        }
+
+        project.tasks.withType<ProcessResources>().configureEach {
+            doLast {
+                destinationDir.resolve("weave.mod.json")
+                    .writeText(Constants.JSON.encodeToString(ext.configuration.get()))
+            }
+        }
+
         val remapJarTask = project.tasks.register("remapJar", RemapJarTask::class.java) {
-            minecraftJar = version.mappedJarCache(mappings)
+            minecraftJar = version.mappedJarCache(ext.configuration.get().namespace)
             inputJar = project.tasks["jar"].outputs.files.singleFile
             outputJar = inputJar.parentFile.resolve("${inputJar.nameWithoutExtension}-mapped.${inputJar.extension}")
         }
@@ -67,8 +90,8 @@ class WeaveGradle : Plugin<Project> {
             val version = ext.version.get()
             val fullMappings = version.loadMergedMappings()
 
-            val mid = ext.mappings.get().id
-            remapJar(fullMappings, inputJar, outputJar, "$mid-named", "official", files = listOf(minecraftJar))
+            val mid = ext.configuration.get().namespace
+            remapJar(fullMappings, inputJar, outputJar, mid, "official", files = listOf(minecraftJar))
         }
     }
 }

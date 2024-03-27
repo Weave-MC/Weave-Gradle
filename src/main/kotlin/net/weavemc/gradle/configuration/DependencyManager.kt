@@ -7,11 +7,8 @@ import net.weavemc.gradle.util.Constants
 import net.weavemc.gradle.util.DownloadUtil
 import net.weavemc.gradle.util.mappedJarCache
 import net.weavemc.gradle.util.minecraftJarCache
-import net.weavemc.internals.MappingsRetrieval
-import net.weavemc.internals.MappingsType
 import net.weavemc.internals.MinecraftVersion
 import org.gradle.api.Project
-import java.io.File
 import java.net.URL
 
 private inline fun <reified T> String?.decodeJSON() =
@@ -20,9 +17,9 @@ private inline fun <reified T> String?.decodeJSON() =
 /**
  * Pulls dependencies from [addMinecraftAssets] and [addMappedMinecraft]
  */
-fun Project.pullDeps(version: MinecraftVersion, mappings: MappingsType) {
+fun Project.pullDeps(version: MinecraftVersion, namespace: String) {
     addMinecraftAssets(version)
-    addMappedMinecraft(version, mappings)
+    addMappedMinecraft(version, namespace)
 }
 
 /**
@@ -45,11 +42,11 @@ private fun Project.addMinecraftAssets(version: MinecraftVersion) {
         .forEach { dependencies.add("compileOnly", it.name) }
 }
 
-private fun Project.addMappedMinecraft(version: MinecraftVersion, mappings: MappingsType) = runCatching {
-    val mapped = version.mappedJarCache(mappings)
+private fun Project.addMappedMinecraft(version: MinecraftVersion, namespace: String) = runCatching {
+    val mapped = version.mappedJarCache(namespace)
     if (!mapped.exists()) {
         val fullMappings = version.loadMergedMappings()
-        remapJar(fullMappings, version.minecraftJarCache, mapped, to = mappings.named)
+        remapJar(fullMappings, version.minecraftJarCache, mapped, to = namespace)
     }
 
     dependencies.add("compileOnly", project.files(mapped))
