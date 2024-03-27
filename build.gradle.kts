@@ -14,8 +14,8 @@ version = projectVersion
 kotlin.jvmToolchain(8)
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
     maven("https://repo.weavemc.dev/releases")
 }
 
@@ -26,8 +26,8 @@ dependencies {
 
     // Kotlinx.serialization JSON library
     implementation(libs.kxSerJSON)
-
     implementation(libs.mappingsUtil)
+    implementation(libs.weaveInternals)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()

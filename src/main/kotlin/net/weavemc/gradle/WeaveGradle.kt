@@ -1,8 +1,17 @@
 package net.weavemc.gradle
 
-import com.grappenmaker.mappings.*
-import net.weavemc.gradle.configuration.*
+import com.grappenmaker.mappings.remapJar
+import kotlinx.serialization.encodeToString
+import net.weavemc.gradle.configuration.WeaveMinecraftExtension
+import net.weavemc.gradle.configuration.pullDeps
+import net.weavemc.gradle.util.Constants
+import net.weavemc.gradle.util.mappedJarCache
+import net.weavemc.gradle.util.minecraftJarCache
+import net.weavemc.internals.MappingsRetrieval
+import net.weavemc.internals.MinecraftVersion
+import net.weavemc.internals.ModConfig
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
@@ -13,15 +22,14 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
-import org.objectweb.asm.commons.SimpleRemapper
+import org.gradle.kotlin.dsl.withType
+import org.gradle.language.jvm.tasks.ProcessResources
 import java.io.File
-import java.util.jar.JarFile
 
 /**
  * Gradle build system plugin used to automate the setup of a modding environment.
  */
 class WeaveGradle : Plugin<Project> {
-
     /**
      * [Plugin.apply]
      *
@@ -32,22 +40,35 @@ class WeaveGradle : Plugin<Project> {
         project.pluginManager.apply(JavaPlugin::class)
 
         val ext = project.extensions.create("minecraft", WeaveMinecraftExtension::class)
-        val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
-        val mappings = ext.mappings.getOrElse(MinecraftMappings.MCP)
 
         project.afterEvaluate {
-            pullDeps(version, mappings)
+            if (!ext.configuration.isPresent) throw GradleException(
+                "Configuration is missing, make sure to add a configuration through the minecraft {} block!"
+            )
+
+            if (!ext.version.isPresent) throw GradleException(
+                "Set a Minecraft version through the minecraft {} block!"
+            )
+
+            val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
+            pullDeps(version, ext.configuration.get().namespace)
+        }
+
+        project.tasks.withType<ProcessResources>().configureEach {
+            doLast {
+                val config = ext.configuration.get().copy(compiledFor = ext.version.get().versionName)
+                destinationDir.resolve("weave.mod.json").writeText(Constants.JSON.encodeToString(config))
+            }
         }
 
         val remapJarTask = project.tasks.register("remapJar", RemapJarTask::class.java) {
-            minecraftJar = JarFile("${version.cacheDirectory}${File.separator}client-${mappings.id}.jar")
+            val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
+            minecraftJar = version.mappedJarCache(ext.configuration.get().namespace)
             inputJar = project.tasks["jar"].outputs.files.singleFile
             outputJar = inputJar.parentFile.resolve("${inputJar.nameWithoutExtension}-mapped.${inputJar.extension}")
         }
 
-        project.tasks.named("assemble") {
-            finalizedBy(remapJarTask)
-        }
+        project.tasks.named("assemble") { finalizedBy(remapJarTask) }
     }
 
     /**
@@ -56,7 +77,7 @@ class WeaveGradle : Plugin<Project> {
      */
     open class RemapJarTask: DefaultTask() {
         @Internal
-        lateinit var minecraftJar: JarFile
+        lateinit var minecraftJar: File
 
         @InputFile
         lateinit var inputJar: File
@@ -66,27 +87,19 @@ class WeaveGradle : Plugin<Project> {
 
         @TaskAction
         fun remap() {
-            val ext = this.project.extensions["minecraft"] as WeaveMinecraftExtension
-            val fullMappings =
-                MappingsLoader.loadMappings(ext.mappings.get().mappingsStream(ext.version.get()).toLines())
+            val ext = project.extensions["minecraft"] as WeaveMinecraftExtension
+            val version = ext.version.get()
+            val fullMappings = version.loadMergedMappings()
 
-            val names = fullMappings.asASMMapping(
-                from = "named",
-                to = "official",
-                includeMethods = false,
-                includeFields = false
-            )
-            val mapper = SimpleRemapper(names)
-            val cache = hashMapOf<String, ByteArray?>()
-
-            val lookup = minecraftJar.entries().asSequence().filter { it.name.endsWith(".class") }
-                .map { it.name.dropLast(6) to { minecraftJar.getInputStream(it).readBytes() } }.toMap()
-
-            remapModJar(fullMappings, inputJar, outputJar, "named", "official") { name ->
-                val mappedName = names[name] ?: name
-                if (mappedName in lookup) cache.getOrPut(mappedName) { lookup.getValue(mappedName)().remap(mapper) }
-                else null
+            val mid = ext.configuration.get().namespace
+            require(mid in fullMappings.namespaces) {
+                "Namespace $mid is not available in mappings! Available namespaces are: ${fullMappings.namespaces}"
             }
+
+            remapJar(fullMappings, inputJar, outputJar, mid, "official", files = listOf(minecraftJar))
         }
     }
 }
+
+fun MinecraftVersion.loadMergedMappings() =
+    MappingsRetrieval.loadMergedWeaveMappings(versionName, minecraftJarCache).mappings
