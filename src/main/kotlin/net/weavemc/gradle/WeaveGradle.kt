@@ -2,6 +2,11 @@ package net.weavemc.gradle
 
 import com.grappenmaker.mappings.*
 import net.weavemc.gradle.configuration.*
+import net.weavemc.gradle.util.mappedJarCache
+import net.weavemc.gradle.util.minecraftJarCache
+import net.weavemc.internals.MappingsRetrieval
+import net.weavemc.internals.MappingsType
+import net.weavemc.internals.MinecraftVersion
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -13,15 +18,12 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
-import org.objectweb.asm.commons.SimpleRemapper
 import java.io.File
-import java.util.jar.JarFile
 
 /**
  * Gradle build system plugin used to automate the setup of a modding environment.
  */
 class WeaveGradle : Plugin<Project> {
-
     /**
      * [Plugin.apply]
      *
@@ -33,21 +35,16 @@ class WeaveGradle : Plugin<Project> {
 
         val ext = project.extensions.create("minecraft", WeaveMinecraftExtension::class)
         val version = ext.version.getOrElse(MinecraftVersion.V1_8_9)
-        val mappings = ext.mappings.getOrElse(MinecraftMappings.MCP)
+        val mappings = ext.mappings.getOrElse(MappingsType.MCP)
 
-        project.afterEvaluate {
-            pullDeps(version, mappings)
-        }
-
+        project.afterEvaluate { pullDeps(version, mappings) }
         val remapJarTask = project.tasks.register("remapJar", RemapJarTask::class.java) {
-            minecraftJar = JarFile("${version.cacheDirectory}${File.separator}client-${mappings.id}.jar")
+            minecraftJar = version.mappedJarCache(mappings)
             inputJar = project.tasks["jar"].outputs.files.singleFile
             outputJar = inputJar.parentFile.resolve("${inputJar.nameWithoutExtension}-mapped.${inputJar.extension}")
         }
 
-        project.tasks.named("assemble") {
-            finalizedBy(remapJarTask)
-        }
+        project.tasks.named("assemble") { finalizedBy(remapJarTask) }
     }
 
     /**
@@ -56,7 +53,7 @@ class WeaveGradle : Plugin<Project> {
      */
     open class RemapJarTask: DefaultTask() {
         @Internal
-        lateinit var minecraftJar: JarFile
+        lateinit var minecraftJar: File
 
         @InputFile
         lateinit var inputJar: File
@@ -66,27 +63,15 @@ class WeaveGradle : Plugin<Project> {
 
         @TaskAction
         fun remap() {
-            val ext = this.project.extensions["minecraft"] as WeaveMinecraftExtension
-            val fullMappings =
-                MappingsLoader.loadMappings(ext.mappings.get().mappingsStream(ext.version.get()).toLines())
+            val ext = project.extensions["minecraft"] as WeaveMinecraftExtension
+            val version = ext.version.get()
+            val fullMappings = version.loadMergedMappings()
 
-            val names = fullMappings.asASMMapping(
-                from = "named",
-                to = "official",
-                includeMethods = false,
-                includeFields = false
-            )
-            val mapper = SimpleRemapper(names)
-            val cache = hashMapOf<String, ByteArray?>()
-
-            val lookup = minecraftJar.entries().asSequence().filter { it.name.endsWith(".class") }
-                .map { it.name.dropLast(6) to { minecraftJar.getInputStream(it).readBytes() } }.toMap()
-
-            remapModJar(fullMappings, inputJar, outputJar, "named", "official") { name ->
-                val mappedName = names[name] ?: name
-                if (mappedName in lookup) cache.getOrPut(mappedName) { lookup.getValue(mappedName)().remap(mapper) }
-                else null
-            }
+            val mid = ext.mappings.get().id
+            remapJar(fullMappings, inputJar, outputJar, "$mid-named", "official", files = listOf(minecraftJar))
         }
     }
 }
+
+fun MinecraftVersion.loadMergedMappings() =
+    MappingsRetrieval.loadMergedWeaveMappings(versionName, minecraftJarCache).mappings

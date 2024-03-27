@@ -26,8 +26,8 @@ dependencies {
 
     // Kotlinx.serialization JSON library
     implementation(libs.kxSerJSON)
-
     implementation(libs.mappingsUtil)
+    implementation(libs.weaveInternals)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()

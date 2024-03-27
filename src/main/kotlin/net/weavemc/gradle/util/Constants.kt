@@ -1,6 +1,8 @@
 package net.weavemc.gradle.util
 
 import kotlinx.serialization.json.Json
+import net.weavemc.internals.MappingsType
+import net.weavemc.internals.MinecraftVersion
 import java.io.File
 
 /**
@@ -27,3 +29,8 @@ object Constants {
      */
     const val VERSION_MANIFEST = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"
 }
+
+val MinecraftVersion.cacheDirectory get() = Constants.CACHE_DIR.resolve("cache-${versionName}").also { it.mkdirs() }
+val MinecraftVersion.minecraftJarCache get() = cacheDirectory.resolve("client.jar")
+fun MinecraftVersion.mappedJarCache(type: MappingsType) =
+    minecraftJarCache.resolveSibling("${minecraftJarCache.nameWithoutExtension}-${type.id}.jar")
