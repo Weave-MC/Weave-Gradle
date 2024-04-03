@@ -23,7 +23,7 @@ object DownloadUtil {
         else {
             val digest = MessageDigest.getInstance("SHA-1")
             file.inputStream().use { input ->
-                val buffer = ByteArray(0x2000)
+                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
                 var read: Int
 
                 while (input.read(buffer).also { read = it } >= 0) {
