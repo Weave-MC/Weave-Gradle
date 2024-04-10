@@ -2,11 +2,11 @@ package net.weavemc.gradle.configuration
 
 import com.grappenmaker.mappings.remapJar
 import kotlinx.serialization.Serializable
-import net.weavemc.gradle.loadMergedMappings
 import net.weavemc.gradle.util.Constants
 import net.weavemc.gradle.util.DownloadUtil
 import net.weavemc.gradle.util.mappedJarCache
 import net.weavemc.gradle.util.minecraftJarCache
+import net.weavemc.internals.MappingsRetrieval
 import net.weavemc.internals.MinecraftVersion
 import org.gradle.api.Project
 import java.net.URL
@@ -51,6 +51,9 @@ private fun Project.addMappedMinecraft(version: MinecraftVersion, namespace: Str
 
     dependencies.add("compileOnly", project.files(mapped))
 }.onFailure { it.printStackTrace() }
+
+fun MinecraftVersion.loadMergedMappings() =
+    MappingsRetrieval.loadMergedWeaveMappings(versionName, minecraftJarCache).mappings
 
 @Serializable
 private data class VersionManifest(val versions: List<ManifestVersion>)
