@@ -55,7 +55,7 @@ plugins {
 
 <div align="right">
 
-Weave is licensed under the [GNU General Public License Version 3][license].
+Weave-Gradle is licensed under the [GNU General Public License Version 3][license].
 
 </div>
 
