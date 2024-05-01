@@ -16,7 +16,11 @@ object Constants {
      *  *  Linux:   `"${HOME}/.gradle/caches/weave/"`
      *  *  Mac:     `"${HOME}/.gradle/caches/weave/"`
      */
-    val CACHE_DIR = File(System.getProperty("user.home"), ".gradle/caches/weave")
+    val CACHE_DIR by lazy {
+        val gradleHomeEnv = System.getenv("GRADLE_HOME")
+        val gradleHome = File(gradleHomeEnv ?: System.getProperty("user.home"))
+        gradleHome.resolve("caches").resolve("weave")
+    }
 
     /**
      * The global JSON serializer
