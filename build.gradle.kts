@@ -11,8 +11,6 @@ val projectGroup: String by project
 group = projectGroup
 version = projectVersion
 
-kotlin.jvmToolchain(8)
-
 repositories {
     mavenLocal()
     mavenCentral()
@@ -28,6 +26,16 @@ dependencies {
     implementation(libs.kxSerJSON)
     implementation(libs.mappingsUtil)
     implementation(libs.weaveInternals)
+}
+
+kotlin.jvmToolchain(8)
+
+java {
+    withSourcesJar()
+
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()
@@ -55,8 +63,7 @@ gradlePlugin {
         create("weave") {
             id = projectGroup
             displayName = projectName
-            description =
-                "Implements Remapped Minecraft libraries intended for developing Minecraft mods with Weave"
+            description = "Implements Remapped Minecraft libraries intended for developing Minecraft mods with Weave"
             implementationClass = "$projectGroup.WeaveGradle"
         }
     }

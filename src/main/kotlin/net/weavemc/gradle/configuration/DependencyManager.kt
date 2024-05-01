@@ -17,7 +17,7 @@ private inline fun <reified T> String?.decodeJSON() =
 /**
  * Pulls dependencies from [addMinecraftAssets] and [addMappedMinecraft]
  */
-fun Project.pullDeps(version: MinecraftVersion, namespace: String) {
+internal fun Project.pullDeps(version: MinecraftVersion, namespace: String) {
     addMinecraftAssets(version)
     addMappedMinecraft(version, namespace)
 }
@@ -52,7 +52,7 @@ private fun Project.addMappedMinecraft(version: MinecraftVersion, namespace: Str
     dependencies.add("compileOnly", project.files(mapped))
 }.onFailure { it.printStackTrace() }
 
-fun MinecraftVersion.loadMergedMappings() =
+private fun MinecraftVersion.loadMergedMappings() =
     MappingsRetrieval.loadMergedWeaveMappings(versionName, minecraftJarCache).mappings
 
 @Serializable
