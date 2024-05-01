@@ -1,13 +1,9 @@
-### Fork renamed 'minecraft' extension to 'weavecraft' to prevent conflict with other modding libraries
-
----
+# Weave's Gradle Plugin
 
 <img
     align="right" width="200px"
     src="https://raw.githubusercontent.com/Weave-MC/.github/master/assets/icon.png"
 />
-
-### Weave-ified Loom
 
 <img
     align="left" alt="status"
@@ -20,53 +16,40 @@ A Gradle build system plugin used to automate the setup of a Weave modding envir
 
 ### Usage
 
-You can use Weave-Gradle as a plugin in your project by implementing it using JitPack. To do this, add the
-following code to your `build.gradle` file.
+You can use Weave-Gradle by adding our maven repository to your **settings** buildscripts:
 
-- **Groovy DSL**
+<details open>
+<summary>Kotlin DSL (settings.gradle.kts)</summary>
 
-> `settings.gradle`
+```gradle
+pluginManagement {
+    repositories {
+        maven("https://repo.weavemc.dev/releases")
+    }
+}
+```
+</details>
+
+<details>
+<summary>Groovy DSL (settings.gradle)</summary>
 
 ```gradle
 pluginManagement {
     repositories {
         maven {
-            name = 'JitPack'
-            url = 'https://jitpack.io'
+            url = "https://repo.weavemc.dev/releases"
         }
     }
 }
 ```
+</details>
 
-> `build.gradle`
-
-```gradle
+Now that you've added our repository, you can apply the plugin in your `build.gradle(.kts)` file's `plugins` block like so:
+```kotlin
 plugins {
-    id "com.github.weave-mc.weave-gradle" version ${VERSION}
+    id("net.weavemc.gradle") version "1.0.0-PRE"
 }
 ```
-
-- **Kotlin DSL**
-
-> `settins.gradle.kts`
-
-```kt
-pluginManagement {
-    repositories {
-        maven("https://jitpack.io")
-    }
-}
-```
-
-> `build.gradle.kts`
-
-```kt
-plugins {
-    id("com.github.weave-mc.weave-gradle") version (${VERSION})
-}
-```
-
-> Replace `${VERSION}` with the version of Weave-Gradle in the Build Reference. (soon:tm:)
 
 ---
 
@@ -78,4 +61,4 @@ Weave is licensed under the [GNU General Public License Version 3][license].
 
 [git]:     https://git-scm.com/
 [jdk]:     https://www.azul.com/downloads/?version=java-17-lts&package=jdk
-[license]: https://github.com/Weave-MC/Weave-Gradle/blob/main/LICENSE
+[license]: ./LICENSE
