@@ -1,6 +1,7 @@
 package net.weavemc.gradle.util
 
 import java.io.IOException
+import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
@@ -11,7 +12,10 @@ import java.security.NoSuchAlgorithmException
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
+const val CONNECTION_IDENTIFIER = "WeaveMC/Weave-Gradle"
+
 object DownloadUtil {
+
     /**
      * Returns the SHA1 checksum of the file as a [String]
      *
@@ -40,20 +44,36 @@ object DownloadUtil {
         null
     }
 
+    private fun establishConnection(url: URL, requestedType: String) =
+        url.openConnection().apply {
+            if (this is HttpURLConnection) {
+                requestMethod = "GET"
+            }
+            connectTimeout = 15000
+            readTimeout = 15000
+            useCaches = false
+            setRequestProperty("Accept", requestedType)
+            setRequestProperty(
+                "User-Agent",
+                "Mozilla/5.0 ($CONNECTION_IDENTIFIER)"
+            )
+            setRequestProperty("Cache-Control", "no-cache")
+        }.inputStream
+
     /**
      * Downloads a file from any URL
      *
      * @param url The URL to download from.
      * @param path The path to download to.
      */
-    private fun download(url: URL, path: Path) {
+    private fun download(url: URL, path: Path) =
         runCatching {
-            url.openStream().use { input ->
-                Files.createDirectories(path.parent)
-                Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING)
-            }
+            establishConnection(url, "application/octet-stream")
+                .use { input ->
+                    Files.createDirectories(path.parent)
+                    Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING)
+                }
         }.onFailure { it.printStackTrace() }
-    }
 
     fun download(url: String, path: String) = download(URL(url), Paths.get(path))
 
@@ -62,10 +82,13 @@ object DownloadUtil {
      *
      * @param url The URL to download from
      */
-    private fun fetch(url: URL) = runCatching { url.openStream().readBytes().decodeToString() }
-        .onFailure { it.printStackTrace() }.getOrNull()
+    private fun fetch(url: URL, mimeType: String) =
+        runCatching {
+            establishConnection(url, mimeType).readBytes().decodeToString()
+        }.onFailure { it.printStackTrace() }.getOrNull()
 
-    fun fetch(url: String) = fetch(URL(url))
+    fun fetch(url: String, mimeType: String = "application/json") =
+        fetch(URL(url), mimeType)
 
     /**
      * Downloads and checksums a file.
