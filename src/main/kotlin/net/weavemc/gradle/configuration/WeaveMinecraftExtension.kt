@@ -31,6 +31,8 @@ class ConfigurationBuilder {
     var namespace by mutatingProperty(backing.namespace) { copy(namespace = it) }
     var dependencies by mutatingProperty(backing.dependencies) { copy(dependencies = it) }
     var entryPoints by mutatingProperty(backing.entryPoints) { copy(entryPoints = it) }
+    var tweakers by mutatingProperty(backing.tweakers) { copy(tweakers = it) }
+    var accessWideners by mutatingProperty(backing.accessWideners) { copy(accessWideners = it) }
     var hooks by mutatingProperty(backing.hooks) { copy(hooks = it) }
     var mixinConfigs by mutatingProperty(backing.mixinConfigs) { copy(mixinConfigs = it) }
 

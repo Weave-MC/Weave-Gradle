@@ -1,5 +1,5 @@
 plugins {
-    kotlin("plugin.serialization") version "1.8.10"
+    alias(libs.plugins.kotlin.serialization)
     `kotlin-dsl`
     `maven-publish`
 }
@@ -20,14 +20,10 @@ repositories {
 }
 
 dependencies {
-    // OW2 ASM
-    implementation(libs.asm)
-    implementation(libs.asmCommons)
-
-    // Kotlinx.serialization JSON library
-    implementation(libs.kxSerJSON)
-    implementation(libs.mappingsUtil)
-    implementation(libs.weaveInternals)
+    implementation(libs.bundles.asm)
+    implementation(libs.kxser.json)
+    implementation(libs.mappings)
+    implementation(libs.weave.internals)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>()

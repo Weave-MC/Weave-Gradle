@@ -2,6 +2,7 @@ package net.weavemc.gradle.util
 
 import kotlinx.serialization.json.Json
 import net.weavemc.internals.MinecraftVersion
+import org.gradle.api.Project
 import java.io.File
 
 /**
@@ -31,5 +32,9 @@ object Constants {
 
 val MinecraftVersion.cacheDirectory get() = Constants.CACHE_DIR.resolve("cache-${versionName}").also { it.mkdirs() }
 val MinecraftVersion.minecraftJarCache get() = cacheDirectory.resolve("client.jar")
-fun MinecraftVersion.mappedJarCache(namespace: String) =
-    minecraftJarCache.resolveSibling("${minecraftJarCache.nameWithoutExtension}-$namespace.jar")
+
+fun Project.mappedJarCache(namespace: String, version: MinecraftVersion) =
+    localGradleCache().file("${version.minecraftJarCache.nameWithoutExtension}-$namespace.jar").asFile
+
+fun Project.localGradleCache() = layout.projectDirectory.dir(".gradle").dir("weave")
+fun Project.localCache() = layout.buildDirectory.dir("weave")

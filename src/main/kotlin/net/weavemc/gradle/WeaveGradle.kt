@@ -1,19 +1,24 @@
 package net.weavemc.gradle
 
-import com.grappenmaker.mappings.remapJar
 import kotlinx.serialization.encodeToString
 import net.weavemc.gradle.configuration.WeaveMinecraftExtension
 import net.weavemc.gradle.configuration.pullDeps
 import net.weavemc.gradle.util.Constants
+import net.weavemc.gradle.util.localCache
+import net.weavemc.gradle.util.minecraftJarCache
+import net.weavemc.internals.MappingsRetrieval
 import net.weavemc.internals.MinecraftVersion
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.withType
-import org.gradle.language.jvm.tasks.ProcessResources
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.*
 
 /**
  * Gradle build system plugin used to automate the setup of a modding environment.
@@ -43,12 +48,30 @@ class WeaveGradle : Plugin<Project> {
             pullDeps(version, ext.configuration.get().namespace)
         }
 
-        project.tasks.withType<ProcessResources>().configureEach {
-            outputs.upToDateWhen { false }
-            doLast {
-                val config = ext.configuration.get().copy(compiledFor = ext.version.get().versionName)
-                destinationDir.resolve("weave.mod.json").writeText(Constants.JSON.encodeToString(config))
-            }
+        val writeModConfig = project.tasks.register<WriteModConfig>("writeModConfig")
+
+        project.tasks.named<Jar>("jar") {
+            dependsOn(writeModConfig)
+            from(writeModConfig)
+        }
+
+        project.tasks.named<Delete>("clean") { delete(writeModConfig) }
+    }
+
+    open class WriteModConfig : DefaultTask() {
+        @get:OutputFile
+        val output = project.localCache().map { it.file("weave.mod.json") }
+
+        @TaskAction
+        fun run() {
+            val config = project.extensions.getByName<WeaveMinecraftExtension>("minecraft").configuration.get()
+            output.get().asFile.writeText(Constants.JSON.encodeToString(config))
         }
     }
 }
+
+fun MinecraftVersion.loadMergedMappings() =
+    MappingsRetrieval.loadMergedWeaveMappings(versionName, minecraftJarCache).mappings
+
+
+val Project.sourceSets get() = extensions.getByName<SourceSetContainer>("sourceSets")
